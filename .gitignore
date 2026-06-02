@@ -1,0 +1,15 @@
+.superpowers/
+.agent/
+.agents/
+.cursor/
+.opencode/
+.antigravitycli/
+CLAUDE.md
+CLAUDE.local.md
+opencode.json
+.worktrees/
+
+tmp-assets/
+
+# APM dependencies
+apm_modules/
