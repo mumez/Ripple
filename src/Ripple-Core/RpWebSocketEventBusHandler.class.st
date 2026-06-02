@@ -17,6 +17,23 @@ RpWebSocketEventBusHandler >> dispatchMessage: rawMessage with: webSocket [
 	(RpMessageDispatcher message: msg socket: webSocket handler: self) dispatch
 ]
 
+{ #category : #registering }
+RpWebSocketEventBusHandler >> register: clientWebSocket [
+	super register: clientWebSocket.
+	lock critical: [
+		| token subscribers |
+		token := clientWebSocket token.
+		subscribers := self subscriptionDict at: token ifAbsentPut: [ Set new ].
+		subscribers add: clientWebSocket ]
+]
+
+{ #category : #registering }
+RpWebSocketEventBusHandler >> unregister: clientWebSocket [
+	lock critical: [
+		self subscriptionDict removeKey: clientWebSocket token ifAbsent: [] ].
+	super unregister: clientWebSocket
+]
+
 { #category : #sending }
 RpWebSocketEventBusHandler >> publishMessage: messageData to: address [
 	| sockets |

@@ -74,6 +74,28 @@ RpMessageDispatcherTest >> testDispatchUnknownTypeDoesNotCrash [
 ]
 
 { #category : #tests }
+RpMessageDispatcherTest >> testRegisterAutoRegistersTokenAddress [
+	"setUp already called handler register: mockSocket with token 'tok-1'"
+	self assert: ((handler subscriptionDict at: 'tok-1' ifAbsent: [ Set new ]) includes: mockSocket)
+]
+
+{ #category : #tests }
+RpMessageDispatcherTest >> testServerCanSendToClientViaTokenAddress [
+	| sent |
+	handler publishMessage: (Dictionary new at: 'greeting' put: 'hello'; yourself) to: 'tok-1'.
+	sent := mockSocket lastMessage.
+	self assert: (sent at: 'type') equals: 'publish'.
+	self assert: (sent at: 'address') equals: 'tok-1'.
+	self assert: ((sent at: 'body') at: 'greeting') equals: 'hello'
+]
+
+{ #category : #tests }
+RpMessageDispatcherTest >> testUnregisterRemovesTokenAddress [
+	handler unregister: mockSocket.
+	self assert: ((handler subscriptionDict at: 'tok-1' ifAbsent: [ Set new ]) includes: mockSocket) not
+]
+
+{ #category : #tests }
 RpMessageDispatcherTest >> testDispatchUnregisterRemovesSubscription [
 	| reg unreg |
 	reg := RpMessageDispatcher
