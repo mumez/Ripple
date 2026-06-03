@@ -20,31 +20,31 @@ RpMessageDispatcher class >> message: aMessage socket: aWebSocket handler: aHand
 
 { #category : #dispatching }
 RpMessageDispatcher >> dispatch [
-	message isRequest ifTrue: [ ^ self dispatchRequest ].
-	message isSend ifTrue: [ ^ self dispatchSend ].
-	message isPublish ifTrue: [ ^ self dispatchPublish ].
-	message isRegister ifTrue: [ ^ self dispatchRegister ].
-	message isUnregister ifTrue: [ ^ self dispatchUnregister ].
-	message isPing ifTrue: [ ^ self dispatchPing ].
-	handler logger warn: { handler className. #UnknownType. message type }
-]
-
-{ #category : #dispatching }
-RpMessageDispatcher >> dispatchPublish [
-	handler publishMessage: message body to: message address
+	self message isRequest ifTrue: [ ^ self dispatchRequest ].
+	self message isSend ifTrue: [ ^ self dispatchSend ].
+	self message isPublish ifTrue: [ ^ self dispatchPublish ].
+	self message isRegister ifTrue: [ ^ self dispatchRegister ].
+	self message isUnregister ifTrue: [ ^ self dispatchUnregister ].
+	self message isPing ifTrue: [ ^ self dispatchPing ].
+	self handler logger warn: { self handler className. #UnknownType. self message type }
 ]
 
 { #category : #dispatching }
 RpMessageDispatcher >> dispatchPing [
-	originatorSocket sendPong
+	self originatorSocket sendPong
+]
+
+{ #category : #dispatching }
+RpMessageDispatcher >> dispatchPublish [
+	self handler publishMessage: self message body to: self message address
 ]
 
 { #category : #dispatching }
 RpMessageDispatcher >> dispatchRegister [
-	handler lock critical: [
+	self handler lock critical: [
 		| subscribers |
-		subscribers := handler subscriptionDict at: message address ifAbsentPut: [ Set new ].
-		subscribers add: originatorSocket.
+		subscribers := self handler subscriptionDict at: self message address ifAbsentPut: [ Set new ].
+		subscribers add: self originatorSocket.
 		(subscribers select: [ :each | each isConnected not ])
 			do: [ :soc | subscribers remove: soc ifAbsent: [] ] ]
 ]
@@ -52,15 +52,15 @@ RpMessageDispatcher >> dispatchRegister [
 { #category : #dispatching }
 RpMessageDispatcher >> dispatchRequest [
 	| ripple |
-	ripple := handler rippleFor: originatorSocket.
-	ripple isNil ifTrue: [
-		originatorSocket sendErrorFor: message type: 'NoSession' message: 'Session not found'.
+	ripple := self handler rippleFor: self originatorSocket.
+	ripple ifNil: [
+		self originatorSocket sendErrorFor: self message type: 'NoSession' message: 'Session not found'.
 		^ self ].
-	[ ripple handleRequest: message ]
+	[ ripple handleRequest: self message ]
 		on: Error
 		do: [ :ex |
-			originatorSocket
-				sendErrorFor: message
+			self originatorSocket
+				sendErrorFor: self message
 				type: 'HandlerError'
 				message: ex messageText ]
 ]
@@ -68,19 +68,19 @@ RpMessageDispatcher >> dispatchRequest [
 { #category : #dispatching }
 RpMessageDispatcher >> dispatchSend [
 	| ripple |
-	ripple := handler rippleFor: originatorSocket.
-	ripple isNil ifTrue: [
-		originatorSocket sendErrorFor: message type: 'NoSession' message: 'Session not found'.
+	ripple := self handler rippleFor: self originatorSocket.
+	ripple ifNil: [
+		self originatorSocket sendErrorFor: self message type: 'NoSession' message: 'Session not found'.
 		^ self ].
-	ripple handleSend: message
+	ripple handleSend: self message
 ]
 
 { #category : #dispatching }
 RpMessageDispatcher >> dispatchUnregister [
-	handler lock critical: [
+	self handler lock critical: [
 		| subscribers |
-		subscribers := handler subscriptionDict at: message address ifAbsent: [ ^ self ].
-		subscribers remove: originatorSocket ifAbsent: [].
+		subscribers := self handler subscriptionDict at: self message address ifAbsent: [ ^ self ].
+		subscribers remove: self originatorSocket ifAbsent: [].
 		(subscribers select: [ :each | each isConnected not ])
 			do: [ :soc | subscribers remove: soc ifAbsent: [] ] ]
 ]
