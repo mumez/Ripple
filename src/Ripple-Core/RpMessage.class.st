@@ -70,6 +70,11 @@ RpMessage >> isPing [
 ]
 
 { #category : #testing }
+RpMessage >> isPublish [
+	^ type = 'publish'
+]
+
+{ #category : #testing }
 RpMessage >> isRegister [
 	^ type = 'register'
 ]

@@ -9,7 +9,5 @@ CLAUDE.local.md
 opencode.json
 .worktrees/
 
-tmp-assets/
-
 # APM dependencies
 apm_modules/

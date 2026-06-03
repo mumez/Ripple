@@ -66,6 +66,14 @@ RpMessageTest >> testIsRegister [
 ]
 
 { #category : #tests }
+RpMessageTest >> testIsPublish [
+	| msg |
+	msg := RpMessage fromJsonString: '{"type":"publish","address":"topic.x"}'.
+	self assert: msg isPublish.
+	self deny: msg isRequest
+]
+
+{ #category : #tests }
 RpMessageTest >> testIsUnregister [
 	| msg |
 	msg := RpMessage fromJsonString: '{"type":"unregister","address":"topic.x"}'.

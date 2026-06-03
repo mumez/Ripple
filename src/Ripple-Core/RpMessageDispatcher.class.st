@@ -22,10 +22,16 @@ RpMessageDispatcher class >> message: aMessage socket: aWebSocket handler: aHand
 RpMessageDispatcher >> dispatch [
 	message isRequest ifTrue: [ ^ self dispatchRequest ].
 	message isSend ifTrue: [ ^ self dispatchSend ].
+	message isPublish ifTrue: [ ^ self dispatchPublish ].
 	message isRegister ifTrue: [ ^ self dispatchRegister ].
 	message isUnregister ifTrue: [ ^ self dispatchUnregister ].
 	message isPing ifTrue: [ ^ self dispatchPing ].
 	handler logger warn: { handler className. #UnknownType. message type }
+]
+
+{ #category : #dispatching }
+RpMessageDispatcher >> dispatchPublish [
+	handler publishMessage: message body to: message address
 ]
 
 { #category : #dispatching }

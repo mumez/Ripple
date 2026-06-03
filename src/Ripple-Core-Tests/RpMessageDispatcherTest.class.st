@@ -66,6 +66,25 @@ RpMessageDispatcherTest >> testDispatchSendDoesNotSendReply [
 ]
 
 { #category : #tests }
+RpMessageDispatcherTest >> testDispatchPublishBroadcastsToRegisteredAddress [
+	| reg dispatcher sent |
+	reg := RpMessageDispatcher
+		message: (RpMessage fromJsonString: '{"type":"register","address":"topic.x"}')
+		socket: mockSocket
+		handler: handler.
+	reg dispatch.
+	dispatcher := RpMessageDispatcher
+		message: (RpMessage fromJsonString: '{"type":"publish","address":"topic.x","body":{"x":1}}')
+		socket: mockSocket
+		handler: handler.
+	dispatcher dispatch.
+	sent := mockSocket lastMessage.
+	self assert: (sent at: 'type') equals: 'publish'.
+	self assert: (sent at: 'address') equals: 'topic.x'.
+	self assert: ((sent at: 'body') at: 'x') equals: 1
+]
+
+{ #category : #tests }
 RpMessageDispatcherTest >> testDispatchUnknownTypeDoesNotCrash [
 	| msg dispatcher |
 	msg := RpMessage fromJsonString: '{"type":"bogus"}'.
