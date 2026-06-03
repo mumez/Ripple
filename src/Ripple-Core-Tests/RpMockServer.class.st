@@ -31,3 +31,13 @@ RpMockServer >> lastRoutePath [
 RpMockServer >> lastRouteHandler [
 	^ addedRoutes last value
 ]
+
+{ #category : #routing }
+RpMockServer >> addRoom: aRippleRoom [
+	aRippleRoom addedTo: self
+]
+
+{ #category : #routing }
+RpMockServer >> addRoomOf: aRippleClass [
+	self addRoom: aRippleClass room
+]

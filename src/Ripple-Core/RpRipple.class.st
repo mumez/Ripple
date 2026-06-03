@@ -8,6 +8,16 @@ Class {
 }
 
 { #category : #'instance creation' }
+RpRipple class >> room [
+	^ RpRippleRoom name: self roomName rippleClass: self
+]
+
+{ #category : #accessing }
+RpRipple class >> roomName [
+	^ self subclassResponsibility
+]
+
+{ #category : #'instance creation' }
 RpRipple class >> on: aWebSocket [
 	^ self new
 		webSocket: aWebSocket;

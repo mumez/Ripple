@@ -73,3 +73,26 @@ RpRippleRoomTest >> testAddedToRegistersRouteAndHandler [
 	self assert: mockServer lastRoutePath equals: '/ws/test'.
 	self assert: mockServer lastRouteHandler equals: room handler
 ]
+
+{ #category : #tests }
+RpRippleRoomTest >> testAddRoomRegistersRoomRoute [
+	| server room |
+	server := RpMockServer new.
+	room := RpRippleRoom name: 'chat' rippleClass: RpRipple.
+	server addRoom: room.
+	self assert: server lastRoutePath equals: '/ws/chat'
+]
+
+{ #category : #tests }
+RpRippleRoomTest >> testAddRoomOfDelegatesToRippleClassRoom [
+	| server |
+	server := RpMockServer new.
+	server addRoomOf: RpMockRipple.
+	self assert: server lastRoutePath equals: '/ws/mock'.
+	self assert: server lastRouteHandler rippleClass equals: RpMockRipple
+]
+
+{ #category : #tests }
+RpRippleRoomTest >> testRpRippleRoomRaisesErrorWhenRoomNameNotOverridden [
+	self should: [ RpRipple room ] raise: Error
+]

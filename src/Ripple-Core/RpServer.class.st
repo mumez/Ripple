@@ -9,6 +9,16 @@ Class {
 }
 
 { #category : #routing }
+RpServer >> addRoom: aRippleRoom [
+	aRippleRoom addedTo: self
+]
+
+{ #category : #routing }
+RpServer >> addRoomOf: aRippleClass [
+	self addRoom: aRippleClass room
+]
+
+{ #category : #routing }
 RpServer >> addRoute: path handler: aWebSocketEventHandler [
 	self teapot
 		GET: path -> [ :req |
