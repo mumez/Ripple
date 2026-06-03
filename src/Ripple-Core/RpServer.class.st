@@ -2,7 +2,8 @@ Class {
 	#name : #RpServer,
 	#superclass : #Object,
 	#instVars : [
-		'teapot'
+		'teapot',
+		'settings'
 	],
 	#category : #'Ripple-Core'
 }
@@ -20,20 +21,16 @@ RpServer >> addRoute: path handler: aWebSocketEventHandler [
 RpServer >> initRoutes [
 
 	self stop.
-	teapot := Teapot configure: {
-			          (#port -> 8080).
-			          (#debugMode -> true).
-			          (#bindAddress -> #[ 127 0 0 1 ]) }.
+	teapot := Teapot configure: self settings teapotConfig.
 	teapot
-		serveStatic: '/assets' from: (FileLocator workingDirectory / 'assets').
+		serveStatic: '/assets' from: self settings assetsDirectory.
 	teapot
 		GET: '/hello' -> [ :req | 'hello' ];
 		GET: '/ws/echo' -> [ :req |
 				(ZnWebSocketDelegate
 					 map: '/ws/echo'
 					 to: ZnWebSocketEchoHandler new) handleRequest: req ].
-				
-			
+
 	self addRoute: '/ws/event-bus' handler: RpWebSocketEventBusHandler shared
 ]
 
@@ -41,6 +38,16 @@ RpServer >> initRoutes [
 RpServer >> initialize [
 	super initialize.
 	self initRoutes
+]
+
+{ #category : #accessing }
+RpServer >> settings [
+	^ settings ifNil: [ settings := RpSettings defaultCopied ]
+]
+
+{ #category : #accessing }
+RpServer >> settings: anRpSettings [
+	settings := anRpSettings
 ]
 
 { #category : #actions }
@@ -55,12 +62,10 @@ RpServer >> stop [
 
 { #category : #accessing }
 RpServer >> teapot [
-
 	^ teapot
 ]
 
 { #category : #accessing }
 RpServer >> teapot: anObject [
-
 	teapot := anObject
 ]
