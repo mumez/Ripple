@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Ripple Test</title>
+</head>
+
+<body>
+    <h1>Ripple App</h1>
+    <div>Ripple app test</div>
+    <div>Connection: <span id="connection-status">connecting...</span></div>
+    <div>Session key: <span id="session-key"></span></div>
+    <button id="add-message" disabled>Add message</button>
+    <ul id="messages">
+    </ul>
+</body>
+<script type="module">
+    import { Ripple } from './js/Ripple.js';
+
+    const sessionKey = crypto.randomUUID();
+    const addMessageButton = document.getElementById('add-message');
+    const connectionStatus = document.getElementById('connection-status');
+    document.getElementById('session-key').innerText = sessionKey;
+
+    const ripple = new Ripple(`ws://localhost:8080/ws/event-bus?token=${sessionKey}`);
+
+    ripple.onOpen(() => {
+        console.log('ripple open');
+        connectionStatus.innerText = 'open';
+        addMessageButton.disabled = false;
+
+        ripple.registerHandler('test', (body, err) => {
+            if (err) { console.error('test error', err); return; }
+            console.log('test received', body);
+        });
+
+        ripple.registerHandler('message-added', (body, err) => {
+            if (err) { console.error('message-added error', err); return; }
+            console.log('message-added received', body);
+            const li = document.createElement('li');
+            li.innerText = `${body.body}: ${body.timestamp}`;
+            document.getElementById('messages').appendChild(li);
+        });
+
+        // request/reply test
+        ripple.request('hello', { test: 'test' }, (body, err) => {
+            if (err) { console.error('hello error', err); return; }
+            console.log('hello reply received', body);
+            ripple.publish('test', { value: 'test-data' });
+        });
+
+        addMessageButton.addEventListener('click', () => {
+            ripple.publish('message-added', {
+                body: `test message from ${sessionKey}`,
+                timestamp: new Date().toLocaleString()
+            });
+        });
+    });
+
+    ripple.onClose(() => {
+        console.log('ripple close');
+        connectionStatus.innerText = 'closed';
+        addMessageButton.disabled = true;
+    });
+</script>
+
+</html>
