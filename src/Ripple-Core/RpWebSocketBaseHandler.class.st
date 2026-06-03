@@ -4,7 +4,8 @@ Class {
 	#instVars : [
 		'lock',
 		'logger',
-		'ripples'
+		'ripples',
+		'rippleClass'
 	],
 	#classInstVars : [
 		'handlers'
@@ -193,7 +194,17 @@ RpWebSocketBaseHandler >> register: clientWebSocket [
 		| token |
 		token := clientWebSocket token.
 		(self validateToken: token) ifTrue: [
-			self ripples at: token put: (RpRipple on: clientWebSocket) ] ]
+			self ripples at: token put: (self rippleClass on: clientWebSocket) ] ]
+]
+
+{ #category : #accessing }
+RpWebSocketBaseHandler >> rippleClass [
+	^ rippleClass ifNil: [ rippleClass := RpRipple ]
+]
+
+{ #category : #accessing }
+RpWebSocketBaseHandler >> rippleClass: aClass [
+	rippleClass := aClass
 ]
 
 { #category : #accessing }
