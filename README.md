@@ -1,6 +1,6 @@
 # Ripple
 
-A Pharo Smalltalk library for building WebSocket-based APIs — "Teapot for WebSocket".
+A Pharo Smalltalk micro library for building WebSocket-based APIs easily — it's like "Teapot for WebSocket".
 
 Ripple implements a publish/subscribe + request/reply event bus over WebSocket connections, sitting on top of [Teapot](https://github.com/zeroflag/teapot) and [Zinc](https://github.com/svenvc/zinc).
 
