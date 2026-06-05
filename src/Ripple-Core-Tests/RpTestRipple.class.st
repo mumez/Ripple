@@ -9,7 +9,7 @@ Class {
 
 { #category : #accessing }
 RpTestRipple class >> roomName [
-	^ 'test'
+	^ 'ripple-integration-test'
 ]
 
 { #category : #'message handling' }
@@ -19,7 +19,7 @@ RpTestRipple >> handleRequest: aMessage [
 
 { #category : #'message handling' }
 RpTestRipple >> handleSend: aMessage [
-	Transcript show: '[RpTestRipple] send received: ' , aMessage body printString; nl.
+	Transcript crShow: '[RpTestRipple] send received: ' , aMessage body printString.
 	aMessage body = 'send from client' ifTrue: [
 		self webSocket sendJson: {
 			'type' -> 'send'.
@@ -51,7 +51,7 @@ RpTestRipple >> startPublishing [
 		[ true ] whileTrue: [
 			[ self webSocket publish: { 'message' -> 'publish from server' } asDictionary to: 'test-events' ]
 				on: Error
-				do: [ :ex | Transcript show: '[RpTestRipple] publish error: ' , ex messageText; nl ].
+				do: [ :ex | Transcript crShow: '[RpTestRipple] publish error: ' , ex messageText ].
 			(Delay forSeconds: 2) wait ] ] fork
 ]
 
