@@ -122,6 +122,45 @@ RpWebSocketBaseHandler        Connection registry (token → RpRipple); mutex-pr
           ·····>* RpRipple          Per-session instance (one per token); subclass per endpoint
 ```
 
+## Integration Testing
+
+The `Ripple-Core-Tests` package includes a ready-made test handler (`RpTestRipple`) and a browser-based UI (`test-assets/`) that exercises send, request, server publish, and client publish against a live server.
+
+### 1. Make the test UI accessible
+
+`RpServer` serves static files from the `assets/` directory relative to the Pharo image. Copy or symlink `test-assets/` as `assets/` next to your image:
+
+```bash
+# symlink (recommended)
+ln -s /path/to/Ripple/test-assets /path/to/pharo-image-dir/assets
+
+# or copy
+cp -r /path/to/Ripple/test-assets /path/to/pharo-image-dir/assets
+```
+
+### 2. Start the server with the test route
+
+`addTestRoute` is provided by `Ripple-Core-Tests` and must be called explicitly — it is not registered by default.
+
+```smalltalk
+| server |
+server := RpServer new.
+server settings allowClientPublish: true.  "optional — enables the client publish feature"
+server addTestRoute.
+server start.
+```
+
+### 3. Open the test UI
+
+Open `http://localhost:8080/assets/index.html` in one or more browser tabs.
+
+Each tab connects with a unique session token and can independently trigger:
+
+- **Send** — sends a message to the server; the server echoes it back with the session token
+- **Request** — sends a request; the server replies with the session token
+- **Start / Stop server publish** — the server broadcasts to all subscribed tabs every 2 seconds (one shared process regardless of how many tabs started it)
+- **Publish from client** — requires `allowClientPublish: true` on server settings
+
 ## License
 
 MIT
