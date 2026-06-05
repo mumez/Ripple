@@ -1,7 +1,7 @@
 Class {
 	#name : #RpTestRipple,
 	#superclass : #RpRipple,
-	#instVars : [
+	#classInstVars : [
 		'publishProcess'
 	],
 	#category : #'Ripple-Core-Tests'
@@ -12,44 +12,60 @@ RpTestRipple class >> roomName [
 	^ 'ripple-integration-test'
 ]
 
+{ #category : #private }
+RpTestRipple class >> publishProcess [
+	^ publishProcess
+]
+
+{ #category : #private }
+RpTestRipple class >> publishProcess: aProcess [
+	publishProcess := aProcess
+]
+
+{ #category : #private }
+RpTestRipple class >> stopPublishing [
+	self publishProcess ifNotNil: [ :process | process terminate ].
+	self publishProcess: nil
+]
+
 { #category : #'message handling' }
 RpTestRipple >> handleRequest: aMessage [
-	self webSocket sendReply: { 'result' -> 'reply from server' } asDictionary for: aMessage
+	| sessionKey |
+	sessionKey := aMessage body at: 'sessionKey' ifAbsent: [ 'unknown' ].
+	Transcript crShow: '[RpTestRipple] request from ' , sessionKey.
+	self webSocket sendReply: { 'result' -> 'reply from server'. 'sessionKey' -> sessionKey } asDictionary for: aMessage
 ]
 
 { #category : #'message handling' }
 RpTestRipple >> handleSend: aMessage [
-	Transcript crShow: '[RpTestRipple] send received: ' , aMessage body printString.
-	aMessage body = 'send from client' ifTrue: [
+	| command sessionKey |
+	command := aMessage body at: 'message' ifAbsent: [ aMessage body printString ].
+	sessionKey := aMessage body at: 'sessionKey' ifAbsent: [ 'unknown' ].
+	Transcript crShow: '[RpTestRipple] send from ' , sessionKey , ': ' , command.
+	command = 'send from client' ifTrue: [
 		self webSocket sendJson: {
 			'type' -> 'send'.
 			'address' -> 'test-response'.
-			'body' -> 'send back from server' } asDictionary.
+			'body' -> { 'message' -> 'send back from server'. 'sessionKey' -> sessionKey } asDictionary } asDictionary.
 		^ self ].
-	aMessage body = 'start publish' ifTrue: [
+	command = 'start publish' ifTrue: [
 		self startPublishing.
 		^ self ].
-	aMessage body = 'stop publish' ifTrue: [
+	command = 'stop publish' ifTrue: [
 		self stopPublishing.
 		^ self ]
 ]
 
 { #category : #private }
-RpTestRipple >> publishProcess [
-	^ publishProcess
-]
-
-{ #category : #private }
-RpTestRipple >> publishProcess: aProcess [
-	publishProcess := aProcess
-]
-
-{ #category : #private }
 RpTestRipple >> startPublishing [
-	self stopPublishing.
-	self publishProcess: [
+	| socket |
+	"Keep only one publish process regardless of the number of clients for testing purposes.
+	The process is held in a class instance variable; stop any existing one before starting a new one."
+	self class stopPublishing.
+	socket := self webSocket.
+	self class publishProcess: [
 		[ true ] whileTrue: [
-			[ self webSocket publish: { 'message' -> 'publish from server' } asDictionary to: 'test-events' ]
+			[ socket publish: { 'message' -> 'publish from server' } asDictionary to: 'test-events' ]
 				on: Error
 				do: [ :ex | Transcript crShow: '[RpTestRipple] publish error: ' , ex messageText ].
 			(Delay forSeconds: 2) wait ] ] fork
@@ -57,6 +73,5 @@ RpTestRipple >> startPublishing [
 
 { #category : #private }
 RpTestRipple >> stopPublishing [
-	self publishProcess ifNotNil: [ :process | process terminate ].
-	self publishProcess: nil
+	self class stopPublishing
 ]

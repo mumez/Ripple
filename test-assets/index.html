@@ -39,7 +39,11 @@
         <div class="note" style="margin-top: 0.5em;">
             ⚠️ Client publish is <strong>disabled by default</strong> and returns an error.
             To enable it, set <code>allowClientPublish: true</code> on the server settings before starting:<br>
-            <code>| s | s := RpServer new. s settings allowClientPublish: true. s addTestRoute. s start.</code>
+            <pre><code>| s |
+s := RpServer new.
+s settings allowClientPublish: true.
+s addTestRoute.
+s start.</code></pre>
         </div>
     </div>
 
@@ -98,12 +102,12 @@
 
     document.getElementById('btn-send').addEventListener('click', () => {
         log('sending: send from client');
-        ripple.send('test', 'send from client');
+        ripple.send('test', { message: 'send from client', sessionKey });
     });
 
     document.getElementById('btn-request').addEventListener('click', () => {
         log('sending request...');
-        ripple.request('test', { query: 'hello' }, (body, err) => {
+        ripple.request('test', { query: 'hello', sessionKey }, (body, err) => {
             if (err) { log('request ERROR: ' + JSON.stringify(err)); return; }
             log('request reply: ' + JSON.stringify(body));
         });
@@ -111,17 +115,17 @@
 
     document.getElementById('btn-start-publish').addEventListener('click', () => {
         log('sending: start publish');
-        ripple.send('test', 'start publish');
+        ripple.send('test', { message: 'start publish', sessionKey });
     });
 
     document.getElementById('btn-stop-publish').addEventListener('click', () => {
         log('sending: stop publish');
-        ripple.send('test', 'stop publish');
+        ripple.send('test', { message: 'stop publish', sessionKey });
     });
 
     document.getElementById('btn-client-publish').addEventListener('click', () => {
         log('publishing from client to test-events...');
-        ripple.publish('test-events', { value: 'from client', timestamp: new Date().toISOString() });
+        ripple.publish('test-events', { value: 'from client', sessionKey, timestamp: new Date().toISOString() });
     });
 </script>
 
