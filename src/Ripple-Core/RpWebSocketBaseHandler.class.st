@@ -1,19 +1,22 @@
 Class {
-	#name : #RpWebSocketBaseHandler,
-	#superclass : #Object,
+	#name : 'RpWebSocketBaseHandler',
+	#superclass : 'Object',
 	#instVars : [
 		'lock',
 		'logger',
 		'ripples',
-		'rippleClass'
+		'rippleClass',
+		'server',
+		'settings'
 	],
 	#classInstVars : [
 		'handlers'
 	],
-	#category : #'Ripple-Core'
+	#category : 'Ripple-Core',
+	#package : 'Ripple-Core'
 }
 
-{ #category : #constants }
+{ #category : 'constants' }
 RpWebSocketBaseHandler class >> clientHtml [
 	^ '<!DOCTYPE html>
 <meta charset="utf-8" />
@@ -102,49 +105,44 @@ Message: <input id="messageInput" type="text" size="64"/>
 
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 RpWebSocketBaseHandler class >> handlerNamed: key [
 	^ self handlers at: key ifAbsentPut: [ self new ] 
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 RpWebSocketBaseHandler class >> handlers [
 
 	^ handlers ifNil: [ handlers := Dictionary new ]
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 RpWebSocketBaseHandler class >> handlers: anObject [
 
 	handlers := anObject
 ]
 
-{ #category : #'class initialization' }
+{ #category : 'class initialization' }
 RpWebSocketBaseHandler class >> initialize [
 	handlers := Dictionary new
 ]
 
-{ #category : #'instance creation' }
+{ #category : 'instance creation' }
 RpWebSocketBaseHandler class >> shared [
 	^ self handlerNamed: #shared
 ]
 
-{ #category : #defaults }
+{ #category : 'defaults' }
 RpWebSocketBaseHandler >> defaultLogger [
 	^RpLocalLogger new
 ]
 
-{ #category : #accessing }
-RpWebSocketBaseHandler >> lock [
-	^ lock
-]
-
-{ #category : #handling }
+{ #category : 'handling' }
 RpWebSocketBaseHandler >> dispatchMessage: rawMessage with: webSocket [
 	self distributeMessage: rawMessage
 ]
 
-{ #category : #handling }
+{ #category : 'handling' }
 RpWebSocketBaseHandler >> distributeMessage: message [
 	lock
 		critical: [ 
@@ -160,7 +158,7 @@ RpWebSocketBaseHandler >> distributeMessage: message [
 									(exception printString)} ] ] ]
 ]
 
-{ #category : #handling }
+{ #category : 'handling' }
 RpWebSocketBaseHandler >> handleMessage: rawMessage with: webSocket [
 	(self rippleFor: webSocket) ifNil: [ 
 		self logger warn: { self className. #NoSuchRipple. rawMessage}.
@@ -169,25 +167,30 @@ RpWebSocketBaseHandler >> handleMessage: rawMessage with: webSocket [
 	self dispatchMessage: rawMessage with: webSocket
 ]
 
-{ #category : #'initialize-release' }
+{ #category : 'initialize-release' }
 RpWebSocketBaseHandler >> initialize [
 	ripples := Dictionary new.
 	lock := Mutex new
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
+RpWebSocketBaseHandler >> lock [
+	^ lock
+]
+
+{ #category : 'accessing' }
 RpWebSocketBaseHandler >> logger [
 
 	^ logger ifNil: [ logger := self defaultLogger ]
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 RpWebSocketBaseHandler >> logger: anObject [
 
 	logger := anObject
 ]
 
-{ #category : #registering }
+{ #category : 'registering' }
 RpWebSocketBaseHandler >> register: clientWebSocket [
 
 	lock critical: [
@@ -197,35 +200,35 @@ RpWebSocketBaseHandler >> register: clientWebSocket [
 			self ripples at: token put: (self rippleClass on: clientWebSocket) ] ]
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 RpWebSocketBaseHandler >> rippleClass [
 	^ rippleClass ifNil: [ rippleClass := RpRipple ]
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 RpWebSocketBaseHandler >> rippleClass: aClass [
 	rippleClass := aClass
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 RpWebSocketBaseHandler >> rippleFor: webSocket [
 	^ self ripples at: webSocket token ifAbsent: [  ]
 	
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 RpWebSocketBaseHandler >> ripples [
 
 	^ ripples
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 RpWebSocketBaseHandler >> ripples: anObject [
 
 	ripples := anObject
 ]
 
-{ #category : #handling }
+{ #category : 'handling' }
 RpWebSocketBaseHandler >> runWith: webSocket [
 	[ self register: webSocket.
 		webSocket runWith: [ :rawMessage | self handleMessage: rawMessage with: webSocket ] ] 
@@ -235,21 +238,42 @@ RpWebSocketBaseHandler >> runWith: webSocket [
 			self unregister: webSocket ]
 ]
 
-{ #category : #registering }
+{ #category : 'accessing' }
+RpWebSocketBaseHandler >> server [
+	^ server
+]
+
+{ #category : 'accessing' }
+RpWebSocketBaseHandler >> server: anRpServer [
+	server := anRpServer
+]
+
+{ #category : 'accessing' }
+RpWebSocketBaseHandler >> settings [
+	settings ifNil: [ settings := (self server ifNotNil: [ :srv | srv settings ]) ifNil: [ RpSettings defaultCopied ] ].
+	^ settings
+]
+
+{ #category : 'accessing' }
+RpWebSocketBaseHandler >> settings: anRpSettings [
+	settings := anRpSettings
+]
+
+{ #category : 'registering' }
 RpWebSocketBaseHandler >> unregister: clientWebSocket [
 	lock
 		critical: [ 
 			self ripples removeKey: clientWebSocket token ifAbsent: [  ] ]
 ]
 
-{ #category : #private }
+{ #category : 'private' }
 RpWebSocketBaseHandler >> validateToken: aToken [
 	aToken isEmptyOrNil ifTrue: [ ^ false ].
 
 	^ true
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 RpWebSocketBaseHandler >> webSockets [
 	^ self ripples collect: [ :each | each webSocket ]
 ]

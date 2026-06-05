@@ -36,6 +36,9 @@ RpMessageDispatcher >> dispatchPing [
 
 { #category : #dispatching }
 RpMessageDispatcher >> dispatchPublish [
+	self settings allowClientPublish ifFalse: [
+		self originatorSocket sendErrorFor: self message type: 'Forbidden' message: 'Client publish is not allowed'.
+		^ self ].
 	self handler publishMessage: self message body to: self message address
 ]
 
@@ -113,4 +116,9 @@ RpMessageDispatcher >> originatorSocket [
 { #category : #accessing }
 RpMessageDispatcher >> originatorSocket: anObject [
 	originatorSocket := anObject
+]
+
+{ #category : #accessing }
+RpMessageDispatcher >> settings [
+	^ self handler settings
 ]

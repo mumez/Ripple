@@ -14,7 +14,13 @@ RpMockServer >> initialize [
 
 { #category : #routing }
 RpMockServer >> addRoute: aPath handler: aHandler [
+	aHandler server: self.
 	addedRoutes add: (Association key: aPath value: aHandler)
+]
+
+{ #category : #accessing }
+RpMockServer >> settings [
+	^ RpSettings defaultCopied
 ]
 
 { #category : #accessing }

@@ -20,6 +20,7 @@ RpServer >> addRoomOf: aRippleClass [
 
 { #category : #routing }
 RpServer >> addRoute: path handler: aWebSocketEventHandler [
+	aWebSocketEventHandler server: self.
 	self teapot
 		GET: path -> [ :req |
 				(RpWebSocketDelegate
