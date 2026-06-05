@@ -9,6 +9,11 @@ Class {
 }
 
 { #category : #routing }
+RpServer >> addDefaultRoutes [
+	self teapot serveStatic: '/assets' from: self settings assetsDirectory
+]
+
+{ #category : #routing }
 RpServer >> addRoom: aRippleRoom [
 	aRippleRoom addedTo: self
 ]
@@ -29,15 +34,9 @@ RpServer >> addRoute: path handler: aWebSocketEventHandler [
 ]
 
 { #category : #initialization }
-RpServer >> initRoutes [
-	teapot := Teapot configure: self settings teapotConfig.
-	teapot
-		serveStatic: '/assets' from: self settings assetsDirectory
-]
-
-{ #category : #initialization }
-RpServer >> initialize [
-	super initialize
+RpServer >> initTeapot [
+	self teapot: (Teapot configure: self settings teapotConfig).
+	self addDefaultRoutes
 ]
 
 { #category : #accessing }
@@ -53,18 +52,23 @@ RpServer >> settings: anRpSettings [
 { #category : #actions }
 RpServer >> start [
 	self stop.
-	self initRoutes.
 	self teapot start
 ]
 
 { #category : #actions }
 RpServer >> stop [
-	self teapot ifNotNil: [ :tp | tp stop ].
+	self teapot ifNotNil: [ :tp | tp stop ]
+]
+
+{ #category : #actions }
+RpServer >> reset [
+	self stop.
 	self teapot: nil
 ]
 
 { #category : #accessing }
 RpServer >> teapot [
+	teapot ifNil: [ self initTeapot ].
 	^ teapot
 ]
 
