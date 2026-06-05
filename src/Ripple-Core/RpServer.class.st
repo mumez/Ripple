@@ -32,15 +32,7 @@ RpServer >> addRoute: path handler: aWebSocketEventHandler [
 RpServer >> initRoutes [
 	teapot := Teapot configure: self settings teapotConfig.
 	teapot
-		serveStatic: '/assets' from: self settings assetsDirectory.
-	teapot
-		GET: '/hello' -> [ :req | 'hello' ];
-		GET: '/ws/echo' -> [ :req |
-				(ZnWebSocketDelegate
-					 map: '/ws/echo'
-					 to: ZnWebSocketEchoHandler new) handleRequest: req ].
-
-	self addRoute: '/ws/event-bus' handler: RpWebSocketEventBusHandler shared
+		serveStatic: '/assets' from: self settings assetsDirectory
 ]
 
 { #category : #initialization }

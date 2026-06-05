@@ -4,64 +4,124 @@
 <head>
     <meta charset="UTF-8">
     <title>Ripple Test</title>
+    <style>
+        body { font-family: sans-serif; max-width: 800px; margin: 2em auto; }
+        .section { margin: 1em 0; padding: 1em; border: 1px solid #ccc; border-radius: 4px; }
+        button { margin: 0.25em; padding: 0.4em 0.8em; }
+        #log { background: #f5f5f5; padding: 1em; height: 300px; overflow-y: auto; font-family: monospace; font-size: 0.85em; }
+        .note { background: #fff3cd; border: 1px solid #ffc107; padding: 0.75em; border-radius: 4px; }
+    </style>
 </head>
 
 <body>
-    <h1>Ripple App</h1>
-    <div>Ripple app test</div>
-    <div>Connection: <span id="connection-status">connecting...</span></div>
-    <div>Session key: <span id="session-key"></span></div>
-    <button id="add-message" disabled>Add message</button>
-    <ul id="messages">
-    </ul>
+    <h1>Ripple Integration Test</h1>
+
+    <div class="section">
+        <div>Connection: <strong id="connection-status">connecting...</strong></div>
+        <div>Token: <span id="session-key"></span></div>
+    </div>
+
+    <div class="section">
+        <h3>Send / Request</h3>
+        <button id="btn-send" disabled>Send "send from client"</button>
+        <button id="btn-request" disabled>Request</button>
+    </div>
+
+    <div class="section">
+        <h3>Server Publish</h3>
+        <button id="btn-start-publish" disabled>Start server publish</button>
+        <button id="btn-stop-publish" disabled>Stop server publish</button>
+    </div>
+
+    <div class="section">
+        <h3>Client Publish</h3>
+        <button id="btn-client-publish" disabled>Publish from client</button>
+        <div class="note" style="margin-top: 0.5em;">
+            ⚠️ Client publish is <strong>disabled by default</strong> and returns an error.
+            To enable it, set <code>allowClientPublish: true</code> on the server settings before starting:<br>
+            <code>| s | s := RpServer new. s settings allowClientPublish: true. s addTestRoute. s start.</code>
+        </div>
+    </div>
+
+    <div class="section">
+        <h3>Log</h3>
+        <button onclick="document.getElementById('log').innerHTML=''">Clear</button>
+        <div id="log"></div>
+    </div>
 </body>
+
 <script type="module">
     import { Ripple } from './js/Ripple.js';
 
     const sessionKey = crypto.randomUUID();
-    const addMessageButton = document.getElementById('add-message');
-    const connectionStatus = document.getElementById('connection-status');
     document.getElementById('session-key').innerText = sessionKey;
 
-    const ripple = new Ripple(`ws://localhost:8080/ws/event-bus?token=${sessionKey}`);
+    const connectionStatus = document.getElementById('connection-status');
+
+    function log(msg) {
+        const div = document.getElementById('log');
+        const line = document.createElement('div');
+        line.innerText = `[${new Date().toLocaleTimeString()}] ${msg}`;
+        div.appendChild(line);
+        div.scrollTop = div.scrollHeight;
+    }
+
+    const ripple = new Ripple(`ws://localhost:8080/ws/test?token=${sessionKey}`);
+
+    const buttons = ['btn-send', 'btn-request', 'btn-start-publish', 'btn-stop-publish', 'btn-client-publish'];
 
     ripple.onOpen(() => {
-        console.log('ripple open');
+        log('connected');
         connectionStatus.innerText = 'open';
-        addMessageButton.disabled = false;
+        buttons.forEach(id => document.getElementById(id).disabled = false);
 
-        ripple.registerHandler('test', (body, err) => {
-            if (err) { console.error('test error', err); return; }
-            console.log('test received', body);
+        ripple.registerHandler('test-response', (body, err) => {
+            if (err) { log('test-response ERROR: ' + JSON.stringify(err)); return; }
+            log('test-response received: ' + JSON.stringify(body));
         });
 
-        ripple.registerHandler('message-added', (body, err) => {
-            if (err) { console.error('message-added error', err); return; }
-            console.log('message-added received', body);
-            const li = document.createElement('li');
-            li.innerText = `${body.body}: ${body.timestamp}`;
-            document.getElementById('messages').appendChild(li);
-        });
-
-        // request/reply test
-        ripple.request('hello', { test: 'test' }, (body, err) => {
-            if (err) { console.error('hello error', err); return; }
-            console.log('hello reply received', body);
-            ripple.publish('test', { value: 'test-data' });
-        });
-
-        addMessageButton.addEventListener('click', () => {
-            ripple.publish('message-added', {
-                body: `test message from ${sessionKey}`,
-                timestamp: new Date().toLocaleString()
-            });
+        ripple.registerHandler('test-events', (body, err) => {
+            if (err) { log('test-events ERROR: ' + JSON.stringify(err)); return; }
+            log('test-events received: ' + JSON.stringify(body));
         });
     });
 
     ripple.onClose(() => {
-        console.log('ripple close');
+        log('disconnected');
         connectionStatus.innerText = 'closed';
-        addMessageButton.disabled = true;
+        buttons.forEach(id => document.getElementById(id).disabled = true);
+    });
+
+    ripple.onError((json) => {
+        log('ERROR: ' + JSON.stringify(json));
+    });
+
+    document.getElementById('btn-send').addEventListener('click', () => {
+        log('sending: send from client');
+        ripple.send('test', 'send from client');
+    });
+
+    document.getElementById('btn-request').addEventListener('click', () => {
+        log('sending request...');
+        ripple.request('test', { query: 'hello' }, (body, err) => {
+            if (err) { log('request ERROR: ' + JSON.stringify(err)); return; }
+            log('request reply: ' + JSON.stringify(body));
+        });
+    });
+
+    document.getElementById('btn-start-publish').addEventListener('click', () => {
+        log('sending: start publish');
+        ripple.send('test', 'start publish');
+    });
+
+    document.getElementById('btn-stop-publish').addEventListener('click', () => {
+        log('sending: stop publish');
+        ripple.send('test', 'stop publish');
+    });
+
+    document.getElementById('btn-client-publish').addEventListener('click', () => {
+        log('publishing from client to test-events...');
+        ripple.publish('test-events', { value: 'from client', timestamp: new Date().toISOString() });
     });
 </script>
 
