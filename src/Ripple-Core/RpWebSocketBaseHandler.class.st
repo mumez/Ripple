@@ -6,7 +6,6 @@ Class {
 		'logger',
 		'ripples',
 		'rippleClass',
-		'server',
 		'settings'
 	],
 	#classInstVars : [
@@ -239,18 +238,8 @@ RpWebSocketBaseHandler >> runWith: webSocket [
 ]
 
 { #category : 'accessing' }
-RpWebSocketBaseHandler >> server [
-	^ server
-]
-
-{ #category : 'accessing' }
-RpWebSocketBaseHandler >> server: anRpServer [
-	server := anRpServer
-]
-
-{ #category : 'accessing' }
 RpWebSocketBaseHandler >> settings [
-	settings ifNil: [ settings := (self server ifNotNil: [ :srv | srv settings ]) ifNil: [ RpSettings defaultCopied ] ].
+	settings ifNil: [ settings := RpSettings defaultCopied ].
 	^ settings
 ]
 

@@ -20,7 +20,7 @@ RpServer >> addRoomOf: aRippleClass [
 
 { #category : #routing }
 RpServer >> addRoute: path handler: aWebSocketEventHandler [
-	aWebSocketEventHandler server: self.
+	aWebSocketEventHandler settings: self settings.
 	self teapot
 		GET: path -> [ :req |
 				(RpWebSocketDelegate
@@ -30,8 +30,6 @@ RpServer >> addRoute: path handler: aWebSocketEventHandler [
 
 { #category : #initialization }
 RpServer >> initRoutes [
-
-	self stop.
 	teapot := Teapot configure: self settings teapotConfig.
 	teapot
 		serveStatic: '/assets' from: self settings assetsDirectory.
@@ -47,8 +45,7 @@ RpServer >> initRoutes [
 
 { #category : #initialization }
 RpServer >> initialize [
-	super initialize.
-	self initRoutes
+	super initialize
 ]
 
 { #category : #accessing }
@@ -63,12 +60,15 @@ RpServer >> settings: anRpSettings [
 
 { #category : #actions }
 RpServer >> start [
-	self teapot ifNotNil: [:tp | tp start]
+	self stop.
+	self initRoutes.
+	self teapot start
 ]
 
 { #category : #actions }
 RpServer >> stop [
-	self teapot ifNotNil: [:tp | tp stop]
+	self teapot ifNotNil: [ :tp | tp stop ].
+	self teapot: nil
 ]
 
 { #category : #accessing }

@@ -14,7 +14,7 @@ RpMockServer >> initialize [
 
 { #category : #routing }
 RpMockServer >> addRoute: aPath handler: aHandler [
-	aHandler server: self.
+	aHandler settings: self settings.
 	addedRoutes add: (Association key: aPath value: aHandler)
 ]
 
