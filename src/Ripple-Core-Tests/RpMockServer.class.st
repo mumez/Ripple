@@ -2,7 +2,8 @@ Class {
 	#name : #RpMockServer,
 	#superclass : #Object,
 	#instVars : [
-		'addedRoutes'
+		'addedRoutes',
+		'settings'
 	],
 	#category : #'Ripple-Core-Tests'
 }
@@ -20,7 +21,7 @@ RpMockServer >> addRoute: aPath handler: aHandler [
 
 { #category : #accessing }
 RpMockServer >> settings [
-	^ RpSettings defaultCopied
+	^ settings ifNil: [ settings := RpSettings defaultCopied ]
 ]
 
 { #category : #accessing }
