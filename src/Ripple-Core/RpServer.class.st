@@ -9,6 +9,11 @@ Class {
 }
 
 { #category : #routing }
+RpServer >> addDefaultRoutes [
+	self teapot serveStatic: '/assets' from: self settings assetsDirectory
+]
+
+{ #category : #routing }
 RpServer >> addRoom: aRippleRoom [
 	aRippleRoom addedTo: self
 ]
@@ -20,6 +25,7 @@ RpServer >> addRoomOf: aRippleClass [
 
 { #category : #routing }
 RpServer >> addRoute: path handler: aWebSocketEventHandler [
+	aWebSocketEventHandler settings: self settings.
 	self teapot
 		GET: path -> [ :req |
 				(RpWebSocketDelegate
@@ -28,26 +34,9 @@ RpServer >> addRoute: path handler: aWebSocketEventHandler [
 ]
 
 { #category : #initialization }
-RpServer >> initRoutes [
-
-	self stop.
-	teapot := Teapot configure: self settings teapotConfig.
-	teapot
-		serveStatic: '/assets' from: self settings assetsDirectory.
-	teapot
-		GET: '/hello' -> [ :req | 'hello' ];
-		GET: '/ws/echo' -> [ :req |
-				(ZnWebSocketDelegate
-					 map: '/ws/echo'
-					 to: ZnWebSocketEchoHandler new) handleRequest: req ].
-
-	self addRoute: '/ws/event-bus' handler: RpWebSocketEventBusHandler shared
-]
-
-{ #category : #initialization }
-RpServer >> initialize [
-	super initialize.
-	self initRoutes
+RpServer >> initTeapot [
+	self teapot: (Teapot configure: self settings teapotConfig).
+	self addDefaultRoutes
 ]
 
 { #category : #accessing }
@@ -62,16 +51,24 @@ RpServer >> settings: anRpSettings [
 
 { #category : #actions }
 RpServer >> start [
-	self teapot ifNotNil: [:tp | tp start]
+	self stop.
+	self teapot start
 ]
 
 { #category : #actions }
 RpServer >> stop [
-	self teapot ifNotNil: [:tp | tp stop]
+	self teapot ifNotNil: [ :tp | tp stop ]
+]
+
+{ #category : #actions }
+RpServer >> reset [
+	self stop.
+	self teapot: nil
 ]
 
 { #category : #accessing }
 RpServer >> teapot [
+	teapot ifNil: [ self initTeapot ].
 	^ teapot
 ]
 

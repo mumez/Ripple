@@ -36,6 +36,9 @@ RpMessageDispatcher >> dispatchPing [
 
 { #category : #dispatching }
 RpMessageDispatcher >> dispatchPublish [
+	self settings allowClientPublish ifFalse: [
+		self sendForbiddenErrorFor: self message.
+		^ self ].
 	self handler publishMessage: self message body to: self message address
 ]
 
@@ -54,15 +57,11 @@ RpMessageDispatcher >> dispatchRequest [
 	| ripple |
 	ripple := self handler rippleFor: self originatorSocket.
 	ripple ifNil: [
-		self originatorSocket sendErrorFor: self message type: 'NoSession' message: 'Session not found'.
+		self sendNoSessionErrorFor: self message.
 		^ self ].
 	[ ripple handleRequest: self message ]
 		on: Error
-		do: [ :ex |
-			self originatorSocket
-				sendErrorFor: self message
-				type: 'HandlerError'
-				message: ex messageText ]
+		do: [ :ex | self sendHandlerErrorFor: self message message: ex messageText ]
 ]
 
 { #category : #dispatching }
@@ -70,7 +69,7 @@ RpMessageDispatcher >> dispatchSend [
 	| ripple |
 	ripple := self handler rippleFor: self originatorSocket.
 	ripple ifNil: [
-		self originatorSocket sendErrorFor: self message type: 'NoSession' message: 'Session not found'.
+		self sendNoSessionErrorFor: self message.
 		^ self ].
 	ripple handleSend: self message
 ]
@@ -113,4 +112,24 @@ RpMessageDispatcher >> originatorSocket [
 { #category : #accessing }
 RpMessageDispatcher >> originatorSocket: anObject [
 	originatorSocket := anObject
+]
+
+{ #category : #'error sending' }
+RpMessageDispatcher >> sendForbiddenErrorFor: aMessage [
+	self originatorSocket sendErrorFor: aMessage type: 'Forbidden' code: 403 message: 'Client publish is not allowed'
+]
+
+{ #category : #'error sending' }
+RpMessageDispatcher >> sendHandlerErrorFor: aMessage message: errorMessage [
+	self originatorSocket sendErrorFor: aMessage type: 'HandlerError' code: 500 message: errorMessage
+]
+
+{ #category : #'error sending' }
+RpMessageDispatcher >> sendNoSessionErrorFor: aMessage [
+	self originatorSocket sendErrorFor: aMessage type: 'NoSession' code: 404 message: 'Session not found'
+]
+
+{ #category : #accessing }
+RpMessageDispatcher >> settings [
+	^ self handler settings
 ]

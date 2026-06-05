@@ -68,6 +68,7 @@ RpMessageDispatcherTest >> testDispatchSendDoesNotSendReply [
 { #category : #tests }
 RpMessageDispatcherTest >> testDispatchPublishBroadcastsToRegisteredAddress [
 	| reg dispatcher sent |
+	handler settings allowClientPublish: true.
 	reg := RpMessageDispatcher
 		message: (RpMessage fromJsonString: '{"type":"register","address":"topic.x"}')
 		socket: mockSocket
@@ -82,6 +83,19 @@ RpMessageDispatcherTest >> testDispatchPublishBroadcastsToRegisteredAddress [
 	self assert: (sent at: 'type') equals: 'publish'.
 	self assert: (sent at: 'address') equals: 'topic.x'.
 	self assert: ((sent at: 'body') at: 'x') equals: 1
+]
+
+{ #category : #tests }
+RpMessageDispatcherTest >> testDispatchPublishForbiddenWhenClientPublishDisallowed [
+	| dispatcher sent |
+	dispatcher := RpMessageDispatcher
+		message: (RpMessage fromJsonString: '{"type":"publish","address":"topic.x","body":{"x":1}}')
+		socket: mockSocket
+		handler: handler.
+	dispatcher dispatch.
+	sent := mockSocket lastMessage.
+	self assert: (sent at: 'type') equals: 'err'.
+	self assert: (sent at: 'failureType') equals: 'Forbidden'
 ]
 
 { #category : #tests }
