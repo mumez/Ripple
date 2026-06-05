@@ -219,7 +219,7 @@ Sent when a `request` or `send` cannot be handled.
 {
   "type": "err",
   "failureType": "NoSession",
-  "failureCode": 0,
+  "failureCode": 404,
   "message": "Session not found",
   "correlationId": "550e8400-e29b-41d4-a716-446655440000"
 }
@@ -228,19 +228,19 @@ Sent when a `request` or `send` cannot be handled.
 | Field | Description |
 |-------|-------------|
 | `failureType` | Machine-readable error category |
-| `failureCode` | Numeric error code (0 = general) |
+| `failureCode` | Numeric error code |
 | `message` | Human-readable description |
 | `correlationId` | Present only when the error originates from a `request` |
 
-**Known failure types:**
+**Defined error types:**
 
-| failureType | Cause | correlationId |
-|-------------|-------|---------------|
-| `NoSession` | No session found for the connection's token | present for `request`, absent for `send` |
-| `HandlerError` | Exception raised inside the request handler | present |
-| `NoMessageType` | `type` field missing from the received message | absent |
+| `failureType` | `failureCode` | Trigger |
+|---------------|---------------|---------|
+| `NoSession` | 404 | `send` or `request` arrived but no session (ripple) is registered for this connection |
+| `Forbidden` | 403 | Client sent a `publish` message but `allowClientPublish` is `false` on the server |
+| `HandlerError` | 500 | The application handler (`handleRequest:` or `handleSend:`) raised an unhandled exception |
 
-Unknown `type` values are logged and silently ignored (no `err` sent).
+> **Note:** Messages with an unknown or missing `type` are silently ignored on the server side (no `err` is sent; a warning is logged internally).
 
 ## Session Lifecycle
 
