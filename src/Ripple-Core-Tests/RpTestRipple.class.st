@@ -43,10 +43,9 @@ RpTestRipple >> handleSend: aMessage [
 	sessionKey := aMessage body at: 'sessionKey' ifAbsent: [ 'unknown' ].
 	Transcript crShow: '[RpTestRipple] send from ' , sessionKey , ': ' , command.
 	command = 'send from client' ifTrue: [
-		self webSocket sendJson: {
-			'type' -> 'send'.
-			'address' -> 'test-response'.
-			'body' -> { 'message' -> 'send back from server'. 'sessionKey' -> sessionKey } asDictionary } asDictionary.
+		self webSocket
+			send: { 'message' -> 'send back from server'. 'sessionKey' -> sessionKey } asDictionary
+			to: 'test-response'.
 		^ self ].
 	command = 'start publish' ifTrue: [
 		self startPublishing.

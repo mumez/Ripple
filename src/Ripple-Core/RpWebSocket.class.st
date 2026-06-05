@@ -43,6 +43,13 @@ RpWebSocket >> publish: jsonDict to: address [
 	^self baseHandler publishMessage: jsonDict to: address
 ]
 
+{ #category : #actions }
+RpWebSocket >> send: jsonDict to: address [
+	| envelope |
+	envelope := { 'type' -> 'send'. 'address' -> address. 'body' -> jsonDict } asDictionary.
+	self sendJson: envelope
+]
+
 { #category : #accessing }
 RpWebSocket >> requestHeaders [
 	^self originalRequest headers
