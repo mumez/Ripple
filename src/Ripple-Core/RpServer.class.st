@@ -47,7 +47,8 @@ RpServer class >> startUp: isImageStarting [
 	isImageStarting ifFalse: [ ^ self ].
 	default ifNotNil: [ default stop ].
 	default := nil.
-	Smalltalk session addDeferredStartupAction: [ self default ]
+	Smalltalk session addDeferredStartupAction: [
+		(Smalltalk globals includesKey: #Teapot) ifTrue: [ self default ] ]
 ]
 
 { #category : #routing }
