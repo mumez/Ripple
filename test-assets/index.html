@@ -16,6 +16,11 @@
 <body>
     <h1>Ripple Integration Test</h1>
 
+    <div class="note" style="margin-bottom: 1em;">
+        Before opening this page, start the server and register the test route in Pharo:<br>
+        <pre style="margin: 0.5em 0 0;"><code>RpServer default addTestRoute.</code></pre>
+    </div>
+
     <div class="section">
         <div>Connection: <strong id="connection-status">connecting...</strong></div>
         <div>Token: <span id="session-key"></span></div>
@@ -37,13 +42,11 @@
         <h3>Client Publish</h3>
         <button id="btn-client-publish" disabled>Publish from client</button>
         <div class="note" style="margin-top: 0.5em;">
-            ⚠️ Client publish is <strong>disabled by default</strong> and returns an error.
-            To enable it, set <code>allowClientPublish: true</code> on the server settings before starting:<br>
-            <pre><code>| s |
-s := RpServer new.
-s settings allowClientPublish: true.
-s addTestRoute.
-s start.</code></pre>
+            ✅ Client publish is <strong>enabled</strong> in this test route.
+            <code>RpTestRipple</code> overrides <code>roomSettings</code> to set <code>allowClientPublish: true</code> on its room settings:<br>
+            <pre><code>RpTestRipple class >> roomSettings [
+    ^ super roomSettings allowClientPublish: true; yourself
+]</code></pre>
         </div>
     </div>
 

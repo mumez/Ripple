@@ -5,8 +5,51 @@ Class {
 		'teapot',
 		'settings'
 	],
+	#classInstVars : [
+		'default'
+	],
 	#category : #'Ripple-Core'
 }
+
+{ #category : #'instance creation' }
+RpServer class >> createStarted [
+	| inst |
+	inst := self new.
+	inst start.
+	^ inst
+]
+
+{ #category : #accessing }
+RpServer class >> default [
+	^ default ifNil: [ default := self createStarted ]
+]
+
+{ #category : #accessing }
+RpServer class >> default: anRpServer [
+	default := anRpServer
+]
+
+{ #category : #'class initialization' }
+RpServer class >> initialize [
+	SessionManager default registerUserClassNamed: self name
+]
+
+{ #category : #actions }
+RpServer class >> resetDefault [
+	<script>
+	self default stop.
+	self default: nil.
+	^ self default start
+]
+
+{ #category : #'system startup' }
+RpServer class >> startUp: isImageStarting [
+	isImageStarting ifFalse: [ ^ self ].
+	default ifNotNil: [ default stop ].
+	default := nil.
+	Smalltalk session addDeferredStartupAction: [
+		(Smalltalk globals hasClassNamed: #Teapot) ifTrue: [ self default ] ]
+]
 
 { #category : #routing }
 RpServer >> addDefaultRoutes [
@@ -25,7 +68,6 @@ RpServer >> addRoomOf: aRippleClass [
 
 { #category : #routing }
 RpServer >> addRoute: path handler: aWebSocketEventHandler [
-	aWebSocketEventHandler settings: self settings.
 	self teapot
 		GET: path -> [ :req |
 				(RpWebSocketDelegate
@@ -41,7 +83,7 @@ RpServer >> initTeapot [
 
 { #category : #accessing }
 RpServer >> settings [
-	^ settings ifNil: [ settings := RpSettings defaultCopied ]
+	^ settings ifNil: [ settings := RpServerSettings defaultCopied ]
 ]
 
 { #category : #accessing }

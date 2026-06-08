@@ -17,6 +17,12 @@ RpRipple class >> roomName [
 	^ self subclassResponsibility
 ]
 
+{ #category : #accessing }
+RpRipple class >> roomSettings [
+	"Override to provide custom room settings"
+	^ RpRoomSettings defaultCopied
+]
+
 { #category : #'instance creation' }
 RpRipple class >> on: aWebSocket [
 	^ self new

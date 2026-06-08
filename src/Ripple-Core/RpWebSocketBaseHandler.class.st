@@ -94,7 +94,7 @@ RpWebSocketBaseHandler class >> clientHtml [
 <h2>WebSocket Chatroom</h2>
 <div>
 Handle: <input id="handleInput" type="text"/>
-Message: <input id="messageInput" type="text" size="64"/> 
+Message: <input id="messageInput" type="text" size="64"/>
 <input id="sendButton" type="submit" value="Send"/>
 <input id="closeButton" type="submit" value="Close"/>
 </div>
@@ -106,7 +106,7 @@ Message: <input id="messageInput" type="text" size="64"/>
 
 { #category : 'accessing' }
 RpWebSocketBaseHandler class >> handlerNamed: key [
-	^ self handlers at: key ifAbsentPut: [ self new ] 
+	^ self handlers at: key ifAbsentPut: [ self new ]
 ]
 
 { #category : 'accessing' }
@@ -144,12 +144,12 @@ RpWebSocketBaseHandler >> dispatchMessage: rawMessage with: webSocket [
 { #category : 'handling' }
 RpWebSocketBaseHandler >> distributeMessage: message [
 	lock
-		critical: [ 
+		critical: [
 			self webSockets values
-				do: [ :each | 
+				do: [ :each |
 					[ each sendMessage: message ]
 						on: NetworkError
-						do: [ :exception | 
+						do: [ :exception |
 							self logger
 								warn:
 									{(self className).
@@ -159,7 +159,7 @@ RpWebSocketBaseHandler >> distributeMessage: message [
 
 { #category : 'handling' }
 RpWebSocketBaseHandler >> handleMessage: rawMessage with: webSocket [
-	(self rippleFor: webSocket) ifNil: [ 
+	(self rippleFor: webSocket) ifNil: [
 		self logger warn: { self className. #NoSuchRipple. rawMessage}.
 		^self
 	 ].
@@ -212,7 +212,7 @@ RpWebSocketBaseHandler >> rippleClass: aClass [
 { #category : 'accessing' }
 RpWebSocketBaseHandler >> rippleFor: webSocket [
 	^ self ripples at: webSocket token ifAbsent: [  ]
-	
+
 ]
 
 { #category : 'accessing' }
@@ -230,16 +230,16 @@ RpWebSocketBaseHandler >> ripples: anObject [
 { #category : 'handling' }
 RpWebSocketBaseHandler >> runWith: webSocket [
 	[ self register: webSocket.
-		webSocket runWith: [ :rawMessage | self handleMessage: rawMessage with: webSocket ] ] 
-		on: NetworkError, PrimitiveFailed  
-		do: [:ex | 
+		webSocket runWith: [ :rawMessage | self handleMessage: rawMessage with: webSocket ] ]
+		on: NetworkError, PrimitiveFailed
+		do: [:ex |
 			self logger warn: {'WebSocket registration failed'. webSocket identityHash. ex printString}.
 			self unregister: webSocket ]
 ]
 
 { #category : 'accessing' }
 RpWebSocketBaseHandler >> settings [
-	settings ifNil: [ settings := RpSettings defaultCopied ].
+	settings ifNil: [ settings := RpBaseSettings defaultCopied ].
 	^ settings
 ]
 
@@ -251,7 +251,7 @@ RpWebSocketBaseHandler >> settings: anRpSettings [
 { #category : 'registering' }
 RpWebSocketBaseHandler >> unregister: clientWebSocket [
 	lock
-		critical: [ 
+		critical: [
 			self ripples removeKey: clientWebSocket token ifAbsent: [  ] ]
 ]
 
