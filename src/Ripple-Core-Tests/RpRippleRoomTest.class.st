@@ -111,18 +111,3 @@ RpRippleRoomTest >> testRoomUsesRippleClassRoomSettings [
 	room := RpRippleRoom name: 'test' rippleClass: RpTestRipple.
 	self assert: room settings allowClientPublish
 ]
-
-{ #category : #tests }
-RpRippleRoomTest >> testRoomSettingsReturnsDefaultCopied [
-	| settings |
-	settings := RpRipple roomSettings.
-	self assert: settings class equals: RpRoomSettings.
-	self deny: settings allowClientPublish
-]
-
-{ #category : #tests }
-RpRippleRoomTest >> testRoomUsesRippleClassRoomSettings [
-	| room |
-	room := RpRippleRoom name: 'test' rippleClass: RpTestRipple.
-	self assert: room settings allowClientPublish
-]
