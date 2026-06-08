@@ -33,16 +33,6 @@ RpSettings >> asDictionary [
 ]
 
 { #category : #accessing }
-RpSettings >> allowClientPublish [
-	^ self at: #allowClientPublish ifAbsentPut: [ false ]
-]
-
-{ #category : #accessing }
-RpSettings >> allowClientPublish: aBoolean [
-	self at: #allowClientPublish put: aBoolean
-]
-
-{ #category : #accessing }
 RpSettings >> assetsDir [
 	^ self at: #assetsDir fallback: {
 		'PHARO_RIPPLE_ASSETS_DIR'.
@@ -133,7 +123,7 @@ RpSettings >> defaultOutput: aSymbol [
 
 { #category : #'accessing-keys' }
 RpSettings >> definedSettingsKeys [
-	^ #(#defaultOutput #port #debugMode #bindAddress #assetsDir #allowClientPublish)
+	^ #(#defaultOutput #port #debugMode #bindAddress #assetsDir)
 ]
 
 { #category : #private }

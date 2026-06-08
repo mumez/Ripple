@@ -4,7 +4,8 @@ Class {
 	#instVars : [
 		'name',
 		'handler',
-		'rippleClass'
+		'rippleClass',
+		'settings'
 	],
 	#category : #'Ripple-Core'
 }
@@ -27,6 +28,7 @@ RpRippleRoom >> createHandler [
 	| newHandler |
 	newHandler := RpWebSocketEventBusHandler handlerNamed: self name.
 	newHandler rippleClass: self rippleClass.
+	newHandler settings: self settings.
 	^ newHandler
 ]
 
@@ -58,6 +60,16 @@ RpRippleRoom >> rippleClass [
 { #category : #accessing }
 RpRippleRoom >> rippleClass: aClass [
 	rippleClass := aClass
+]
+
+{ #category : #accessing }
+RpRippleRoom >> settings [
+	^ settings ifNil: [ settings := RpRoomSettings new ]
+]
+
+{ #category : #accessing }
+RpRippleRoom >> settings: anRpRoomSettings [
+	settings := anRpRoomSettings
 ]
 
 { #category : #routing }

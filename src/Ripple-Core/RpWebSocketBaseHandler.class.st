@@ -239,7 +239,7 @@ RpWebSocketBaseHandler >> runWith: webSocket [
 
 { #category : 'accessing' }
 RpWebSocketBaseHandler >> settings [
-	settings ifNil: [ settings := RpSettings defaultCopied ].
+	settings ifNil: [ settings := RpRoomSettings new ].
 	^ settings
 ]
 
