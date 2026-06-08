@@ -53,6 +53,12 @@ RpWebSocketEventBusHandler >> publishMessage: messageData to: address with: sock
 ]
 
 { #category : #accessing }
+RpWebSocketEventBusHandler >> settings [
+	settings ifNil: [ settings := RpRoomSettings defaultCopied ].
+	^ settings
+]
+
+{ #category : #accessing }
 RpWebSocketEventBusHandler >> subscriptionDict [
 	^ subscriptionDict ifNil: [ subscriptionDict := Dictionary new ]
 ]
