@@ -64,7 +64,7 @@ RpRippleRoom >> rippleClass: aClass [
 
 { #category : #accessing }
 RpRippleRoom >> settings [
-	^ settings ifNil: [ settings := RpRoomSettings defaultCopied ]
+	^ settings ifNil: [ settings := self rippleClass roomSettings ]
 ]
 
 { #category : #accessing }

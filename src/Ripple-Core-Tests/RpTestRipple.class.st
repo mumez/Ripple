@@ -13,8 +13,8 @@ RpTestRipple class >> roomName [
 ]
 
 { #category : #accessing }
-RpTestRipple class >> room [
-	^ super room settings allowClientPublish: true; yourself
+RpTestRipple class >> roomSettings [
+	^ super roomSettings allowClientPublish: true; yourself
 ]
 
 { #category : #private }

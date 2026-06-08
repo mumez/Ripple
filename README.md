@@ -35,6 +35,10 @@ Metacello new
 
 ### 1. Start the server
 
+After loading the package, `RpServer` registers itself with Pharo's `SessionManager` and starts automatically on each image startup — no explicit call is normally needed.
+
+To start manually:
+
 ```smalltalk
 RpServer default start.
 ```
@@ -76,11 +80,11 @@ Each room's handler exposes `RpRoomSettings` via its `settings` accessor:
 |---------|---------|-------------|
 | `allowClientPublish` | `false` | Allow clients to publish to arbitrary addresses |
 
-Configure room settings by overriding `room` on your `RpRipple` subclass:
+Configure room settings by overriding `roomSettings` on your `RpRipple` subclass:
 
 ```smalltalk
-MyRipple class >> room [
-    ^ super room settings allowClientPublish: true; yourself
+MyRipple class >> roomSettings [
+    ^ super roomSettings allowClientPublish: true; yourself
 ]
 ```
 

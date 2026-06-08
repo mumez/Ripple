@@ -43,9 +43,9 @@
         <button id="btn-client-publish" disabled>Publish from client</button>
         <div class="note" style="margin-top: 0.5em;">
             ✅ Client publish is <strong>enabled</strong> in this test route.
-            <code>RpTestRipple</code> overrides <code>room</code> to set <code>allowClientPublish: true</code> on its room settings:<br>
-            <pre><code>RpTestRipple class >> room [
-    ^ super room settings allowClientPublish: true; yourself
+            <code>RpTestRipple</code> overrides <code>roomSettings</code> to set <code>allowClientPublish: true</code> on its room settings:<br>
+            <pre><code>RpTestRipple class >> roomSettings [
+    ^ super roomSettings allowClientPublish: true; yourself
 ]</code></pre>
         </div>
     </div>
