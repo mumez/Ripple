@@ -35,11 +35,11 @@ RpServer class >> initialize [
 ]
 
 { #category : #actions }
-RpServer class >> restart [
+RpServer class >> resetDefault [
 	<script>
 	self default stop.
 	self default: nil.
-	self default start
+	^ self default start
 ]
 
 { #category : #'system startup' }
