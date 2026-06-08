@@ -12,6 +12,11 @@ RpTestRipple class >> roomName [
 	^ 'ripple-integration-test'
 ]
 
+{ #category : #accessing }
+RpTestRipple class >> room [
+	^ super room settings allowClientPublish: true; yourself
+]
+
 { #category : #private }
 RpTestRipple class >> publishProcess [
 	^ publishProcess

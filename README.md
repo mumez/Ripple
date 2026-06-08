@@ -36,23 +36,30 @@ Metacello new
 ### 1. Start the server
 
 ```smalltalk
-RpServer new start.
+RpServer default start.
 ```
 
 The server binds to `127.0.0.1:8080` by default.
 
 ### 2. Customize settings
 
+Ripple uses two settings objects:
+
+- **`RpServerSettings`** — accessed via `server settings`; controls the HTTP/WebSocket server itself.
+- **`RpRoomSettings`** — accessed via a handler's `settings`; controls per-room behaviour.
+
+#### Server settings
+
 ```smalltalk
 | server |
-server := RpServer new.
+server := RpServer default.
 server settings port: 9090.
 server settings debugMode: true.
 server settings assetsDir: '/path/to/my/assets'.
 server start.
 ```
 
-Settings are backed by environment variables and have sensible defaults:
+Server settings are backed by environment variables and have sensible defaults:
 
 | Setting | Env var | Default |
 |---------|---------|---------|
@@ -60,6 +67,22 @@ Settings are backed by environment variables and have sensible defaults:
 | `debugMode` | `PHARO_RIPPLE_DEBUG_MODE` | `false` |
 | `bindAddress` | `PHARO_RIPPLE_BIND_ADDRESS` | `127.0.0.1` |
 | `assetsDir` | `PHARO_RIPPLE_ASSETS_DIR` | `<cwd>/assets` |
+
+#### Room settings
+
+Each room's handler exposes `RpRoomSettings` via its `settings` accessor:
+
+| Setting | Default | Description |
+|---------|---------|-------------|
+| `allowClientPublish` | `false` | Allow clients to publish to arbitrary addresses |
+
+Configure room settings by overriding `room` on your `RpRipple` subclass:
+
+```smalltalk
+MyRipple class >> room [
+    ^ super room settings allowClientPublish: true; yourself
+]
+```
 
 ### 3. Define a handler
 
@@ -84,9 +107,8 @@ MyEchoRipple >> handleRequest: aMessage [
 
 ```smalltalk
 | server |
-server := RpServer new.
+server := RpServer default.
 server addRoomOf: MyEchoRipple.
-server start.
 ```
 
 ### 5. Connect from the browser
@@ -144,8 +166,7 @@ cp -r /path/to/Ripple/test-assets /path/to/pharo-image-dir/assets
 
 ```smalltalk
 | server |
-server := RpServer new.
-server settings allowClientPublish: true.  "optional — enables the client publish feature"
+server := RpServer default.
 server addTestRoute.
 server start.
 ```
@@ -159,7 +180,7 @@ Each tab connects with a unique session token and can independently trigger:
 - **Send** — sends a message to the server; the server echoes it back with the session token
 - **Request** — sends a request; the server replies with the session token
 - **Start / Stop server publish** — the server broadcasts to all subscribed tabs every 2 seconds (one shared process regardless of how many tabs started it)
-- **Publish from client** — requires `allowClientPublish: true` on server settings
+- **Publish from client** — requires `allowClientPublish: true` on the room's handler settings (enabled by default in `RpTestRipple`)
 
 ## License
 
