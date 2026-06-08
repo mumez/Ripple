@@ -5,8 +5,50 @@ Class {
 		'teapot',
 		'settings'
 	],
+	#classInstVars : [
+		'default'
+	],
 	#category : #'Ripple-Core'
 }
+
+{ #category : #'instance creation' }
+RpServer class >> createStarted [
+	| inst |
+	inst := self new.
+	inst start.
+	^ inst
+]
+
+{ #category : #accessing }
+RpServer class >> default [
+	^ default ifNil: [ default := self createStarted ]
+]
+
+{ #category : #accessing }
+RpServer class >> default: anRpServer [
+	default := anRpServer
+]
+
+{ #category : #'class initialization' }
+RpServer class >> initialize [
+	SessionManager default registerUserClassNamed: self name
+]
+
+{ #category : #actions }
+RpServer class >> restart [
+	<script>
+	self default stop.
+	self default: nil.
+	self default start
+]
+
+{ #category : #'system startup' }
+RpServer class >> startUp: isImageStarting [
+	isImageStarting ifFalse: [ ^ self ].
+	default ifNotNil: [ default stop ].
+	default := nil.
+	Smalltalk session addDeferredStartupAction: [ self default ]
+]
 
 { #category : #routing }
 RpServer >> addDefaultRoutes [
