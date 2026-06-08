@@ -59,7 +59,9 @@ RpMessageDispatcher >> dispatchRequest [
 	ripple ifNil: [
 		self sendNoSessionErrorFor: self message.
 		^ self ].
-	[ ripple handleRequest: self message ]
+	[ [ ripple handleRequest: self message ]
+		on: RpError
+		do: [ :ex | self sendApplicationErrorFor: self message error: ex ] ]
 		on: Error
 		do: [ :ex | self sendHandlerErrorFor: self message message: ex messageText ]
 ]
@@ -115,18 +117,23 @@ RpMessageDispatcher >> originatorSocket: anObject [
 ]
 
 { #category : #'error sending' }
+RpMessageDispatcher >> sendApplicationErrorFor: aMessage error: anRpError [
+	self originatorSocket sendError: anRpError for: aMessage
+]
+
+{ #category : #'error sending' }
 RpMessageDispatcher >> sendForbiddenErrorFor: aMessage [
-	self originatorSocket sendErrorFor: aMessage type: 'Forbidden' code: 403 message: 'Client publish is not allowed'
+	self originatorSocket sendError: RpError forbidden for: aMessage
 ]
 
 { #category : #'error sending' }
 RpMessageDispatcher >> sendHandlerErrorFor: aMessage message: errorMessage [
-	self originatorSocket sendErrorFor: aMessage type: 'HandlerError' code: 500 message: errorMessage
+	self originatorSocket sendError: (RpError handlerError: errorMessage) for: aMessage
 ]
 
 { #category : #'error sending' }
 RpMessageDispatcher >> sendNoSessionErrorFor: aMessage [
-	self originatorSocket sendErrorFor: aMessage type: 'NoSession' code: 404 message: 'Session not found'
+	self originatorSocket sendError: RpError noSession for: aMessage
 ]
 
 { #category : #accessing }

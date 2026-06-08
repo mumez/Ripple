@@ -71,31 +71,44 @@ RpWebSocket >> responseHeaders [
 ]
 
 { #category : #'sending events' }
-RpWebSocket >> sendError: message [
-	self sendError: message type: 'general'
+RpWebSocket >> sendError: anRpError [
+	self sendJson: anRpError asJson
 ]
 
 { #category : #'sending events' }
-RpWebSocket >> sendError: message type: failureType [
-	self sendError: message type: failureType code: 0
-]
-
-{ #category : #'sending events' }
-RpWebSocket >> sendError: message type: failureType code: failureCode [
-	self sendError: message type: failureType code: failureCode otherData: nil
-]
-
-{ #category : #'sending events' }
-RpWebSocket >> sendError: message type: failureType code: failureCode otherData: otherData [
+RpWebSocket >> sendError: anRpError for: aMessage [
 	| jsonDict |
-	jsonDict := { 'type'->'err'. 'failureCode'->failureCode. 'failureType'->failureType. 'message'->message} asDictionary.
-	otherData ifNotNil: [jsonDict at: 'data' put: otherData].
-	self sendJson: jsonDict.
+	jsonDict := anRpError asJson.
+	aMessage isRequest ifTrue: [ jsonDict at: 'correlationId' put: aMessage correlationId ].
+	self sendJson: jsonDict
 ]
 
 { #category : #sending }
 RpWebSocket >> sendJson: anObject [
-	self sendText: (NeoJSONWriter toString: anObject) 
+	self sendText: (NeoJSONWriter toString: anObject)
+]
+
+{ #category : #'sending events' }
+RpWebSocket >> sendErrorMessage: message [
+	self sendErrorMessage: message type: 'general'
+]
+
+{ #category : #'sending events' }
+RpWebSocket >> sendErrorMessage: message type: failureType [
+	self sendErrorMessage: message type: failureType code: 0
+]
+
+{ #category : #'sending events' }
+RpWebSocket >> sendErrorMessage: message type: failureType code: failureCode [
+	self sendErrorMessage: message type: failureType code: failureCode otherData: nil
+]
+
+{ #category : #'sending events' }
+RpWebSocket >> sendErrorMessage: message type: failureType code: failureCode otherData: otherData [
+	| error |
+	error := RpError code: failureCode type: failureType message: message.
+	error otherData: otherData.
+	self sendError: error
 ]
 
 { #category : #'sending events' }
@@ -104,23 +117,6 @@ RpWebSocket >> sendPublish: replyDict to: address [
 	jsonDict := {'type'->'publish'. 'address'->address} asDictionary.
 	jsonDict at: 'body' put: replyDict asDictionary.
 	self sendJson: jsonDict.
-]
-
-{ #category : #'sending events' }
-RpWebSocket >> sendErrorFor: aMessage type: failureType message: errorMessage [
-	self sendErrorFor: aMessage type: failureType code: 0 message: errorMessage
-]
-
-{ #category : #'sending events' }
-RpWebSocket >> sendErrorFor: aMessage type: failureType code: failureCode message: errorMessage [
-	| jsonDict |
-	jsonDict := Dictionary new.
-	jsonDict at: 'type' put: 'err'.
-	jsonDict at: 'failureType' put: failureType.
-	jsonDict at: 'failureCode' put: failureCode.
-	jsonDict at: 'message' put: errorMessage.
-	aMessage isRequest ifTrue: [ jsonDict at: 'correlationId' put: aMessage correlationId ].
-	self sendJson: jsonDict
 ]
 
 { #category : #'sending events' }

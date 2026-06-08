@@ -99,6 +99,35 @@ RpMessageDispatcherTest >> testDispatchPublishForbiddenWhenClientPublishDisallow
 ]
 
 { #category : #tests }
+RpMessageDispatcherTest >> testDispatchRequestRpErrorSentAsApplicationError [
+	| localHandler localSocket msg dispatcher |
+	localHandler := RpWebSocketEventBusHandler new.
+	localHandler rippleClass: RpApplicationErrorRipple.
+	localSocket := RpMockSocket new token: 'err-tok'.
+	localHandler register: localSocket.
+	msg := RpMessage fromJsonString: '{"type":"request","address":"a","correlationId":"c1"}'.
+	dispatcher := RpMessageDispatcher message: msg socket: localSocket handler: localHandler.
+	dispatcher dispatch.
+	self assert: (localSocket lastMessage at: 'type') equals: 'err'.
+	self assert: (localSocket lastMessage at: 'failureType') equals: 'application'.
+	self assert: (localSocket lastMessage at: 'correlationId') equals: 'c1'
+]
+
+{ #category : #tests }
+RpMessageDispatcherTest >> testDispatchRequestGenericErrorSentAsHandlerError [
+	| localHandler localSocket msg dispatcher |
+	localHandler := RpWebSocketEventBusHandler new.
+	localHandler rippleClass: RpGenericErrorRipple.
+	localSocket := RpMockSocket new token: 'err-tok'.
+	localHandler register: localSocket.
+	msg := RpMessage fromJsonString: '{"type":"request","address":"a","correlationId":"c1"}'.
+	dispatcher := RpMessageDispatcher message: msg socket: localSocket handler: localHandler.
+	dispatcher dispatch.
+	self assert: (localSocket lastMessage at: 'type') equals: 'err'.
+	self assert: (localSocket lastMessage at: 'failureType') equals: 'HandlerError'
+]
+
+{ #category : #tests }
 RpMessageDispatcherTest >> testDispatchUnknownTypeDoesNotCrash [
 	| msg dispatcher |
 	msg := RpMessage fromJsonString: '{"type":"bogus"}'.
