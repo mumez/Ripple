@@ -42,25 +42,21 @@ RpMockSocket >> lastMessage [
 ]
 
 { #category : #sending }
-RpMockSocket >> sendJson: anObject [
-	sentMessages add: anObject
+RpMockSocket >> sendError: anRpError [
+	sentMessages add: anRpError asJson
 ]
 
 { #category : #sending }
-RpMockSocket >> sendErrorFor: aMessage type: failureType message: errorMessage [
-	self sendErrorFor: aMessage type: failureType code: 0 message: errorMessage
-]
-
-{ #category : #sending }
-RpMockSocket >> sendErrorFor: aMessage type: failureType code: failureCode message: errorMessage [
+RpMockSocket >> sendError: anRpError for: aMessage [
 	| jsonDict |
-	jsonDict := Dictionary new.
-	jsonDict at: 'type' put: 'err'.
-	jsonDict at: 'failureType' put: failureType.
-	jsonDict at: 'failureCode' put: failureCode.
-	jsonDict at: 'message' put: errorMessage.
+	jsonDict := anRpError asJson.
 	aMessage isRequest ifTrue: [ jsonDict at: 'correlationId' put: aMessage correlationId ].
 	sentMessages add: jsonDict
+]
+
+{ #category : #sending }
+RpMockSocket >> sendJson: anObject [
+	sentMessages add: anObject
 ]
 
 { #category : #sending }
