@@ -82,7 +82,7 @@ RpServer >> initTeapot [
 
 { #category : #accessing }
 RpServer >> settings [
-	^ settings ifNil: [ settings := RpSettings defaultCopied ]
+	^ settings ifNil: [ settings := RpServerSettings defaultCopied ]
 ]
 
 { #category : #accessing }

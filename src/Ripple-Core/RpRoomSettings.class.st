@@ -1,18 +1,21 @@
 Class {
-	#name : #RpRoomSettings,
-	#superclass : #Object,
-	#instVars : [
-		'allowClientPublish'
-	],
-	#category : #'Ripple-Core'
+	#name : 'RpRoomSettings',
+	#superclass : 'RpBaseSettings',
+	#category : 'Ripple-Core',
+	#package : 'Ripple-Core'
 }
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 RpRoomSettings >> allowClientPublish [
-	^ allowClientPublish ifNil: [ false ]
+	^ self at: #allowClientPublish ifAbsentPut: [ false ]
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 RpRoomSettings >> allowClientPublish: aBoolean [
-	allowClientPublish := aBoolean
+	self at: #allowClientPublish put: aBoolean
+]
+
+{ #category : 'accessing-keys' }
+RpRoomSettings >> definedSettingsKeys [
+	^ #(#allowClientPublish)
 ]

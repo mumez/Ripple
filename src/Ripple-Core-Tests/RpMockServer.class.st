@@ -21,7 +21,7 @@ RpMockServer >> addRoute: aPath handler: aHandler [
 
 { #category : #accessing }
 RpMockServer >> settings [
-	^ settings ifNil: [ settings := RpSettings defaultCopied ]
+	^ settings ifNil: [ settings := RpServerSettings defaultCopied ]
 ]
 
 { #category : #accessing }
