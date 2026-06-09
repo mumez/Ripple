@@ -240,7 +240,7 @@ Sent when a `request` or `send` cannot be handled.
 | `Forbidden` | 403 | Client sent a `publish` message but `allowClientPublish` is `false` on the server |
 | `HandlerError` | 500 | The application handler (`handleRequest:` or `handleSend:`) raised an unhandled exception |
 | `general` | 0 | Generic server-side error with no specific category |
-| `application` | 1000 | Application-level error explicitly raised by the handler |
+| `application` | 10000 | Application-level error explicitly raised by the handler |
 
 > **Note:** Messages with an unknown or missing `type` are silently ignored on the server side (no `err` is sent; a warning is logged internally).
 
