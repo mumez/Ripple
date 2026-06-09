@@ -33,7 +33,7 @@ RpErrorTest >> testHandlerErrorAttributes [
 RpErrorTest >> testApplicationDefaultMessageText [
 	| error |
 	error := RpError application.
-	self assert: error code equals: 1000.
+	self assert: error code equals: 10000.
 	self assert: error type equals: 'application'.
 	self assert: error messageText equals: ''
 ]
@@ -42,7 +42,7 @@ RpErrorTest >> testApplicationDefaultMessageText [
 RpErrorTest >> testApplicationWithMessage [
 	| error |
 	error := RpError application: 'some error'.
-	self assert: error code equals: 1000.
+	self assert: error code equals: 10000.
 	self assert: error type equals: 'application'.
 	self assert: error messageText equals: 'some error'
 ]
