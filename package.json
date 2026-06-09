@@ -1,0 +1,8 @@
+{
+  "scripts": {
+    "build": "cp node_modules/ripple-st-client/dist/index.js test-assets/js/ripple-st-client.js"
+  },
+  "dependencies": {
+    "ripple-st-client": "^0.1.0"
+  }
+}
