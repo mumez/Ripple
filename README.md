@@ -152,7 +152,20 @@ RpWebSocketBaseHandler        Connection registry (token → RpRipple); mutex-pr
 
 The `Ripple-Core-Tests` package includes a ready-made test handler (`RpTestRipple`) and a browser-based UI (`test-assets/`) that exercises send, request, server publish, and client publish against a live server.
 
-### 1. Make the test UI accessible
+The test UI uses [ripple-st-client](https://github.com/mumez/ripple-st-client) — the official npm package for the Ripple protocol.
+
+### 1. Build the client library
+
+Install the npm package and copy its built output into `test-assets/js/`:
+
+```bash
+npm install
+npm run build
+```
+
+`npm run build` copies `node_modules/ripple-st-client/dist/index.js` to `test-assets/js/ripple-st-client.js`. Re-run it whenever you update the package version.
+
+### 2. Make the test UI accessible
 
 `RpServer` serves static files from the `assets/` directory relative to the Pharo image. Copy or symlink `test-assets/` as `assets/` next to your image:
 
@@ -164,7 +177,7 @@ ln -s /path/to/Ripple/test-assets /path/to/pharo-image-dir/assets
 cp -r /path/to/Ripple/test-assets /path/to/pharo-image-dir/assets
 ```
 
-### 2. Start the server with the test route
+### 3. Start the server with the test route
 
 `addTestRoute` is provided by `Ripple-Core-Tests` and must be called explicitly — it is not registered by default.
 
@@ -175,7 +188,7 @@ server addTestRoute.
 server start.
 ```
 
-### 3. Open the test UI
+### 4. Open the test UI
 
 Open `http://localhost:8080/assets/index.html` in one or more browser tabs.
 
