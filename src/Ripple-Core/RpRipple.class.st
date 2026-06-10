@@ -10,7 +10,7 @@ Class {
 { #category : #actions }
 RpRipple class >> autoPutAllRoutesToDefaultServer [
 	<script>
-	self subclasses
+	self allSubclasses
 		select: [ :subclass | subclass shouldAutoPutRoute ]
 		thenDo: [ :subclass | subclass putRouteToDefaultServer ]
 ]
