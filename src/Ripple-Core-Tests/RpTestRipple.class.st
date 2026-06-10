@@ -7,6 +7,11 @@ Class {
 	#category : #'Ripple-Core-Tests'
 }
 
+{ #category : #testing }
+RpTestRipple class >> shouldAutoPutRoute [
+	^ false
+]
+
 { #category : #accessing }
 RpTestRipple class >> roomName [
 	^ 'ripple-integration-test'

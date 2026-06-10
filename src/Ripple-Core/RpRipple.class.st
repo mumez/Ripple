@@ -7,6 +7,30 @@ Class {
 	#category : #'Ripple-Core'
 }
 
+{ #category : #actions }
+RpRipple class >> autoPutAllRoutesToDefaultServer [
+	<script>
+	self subclasses
+		select: [ :subclass | subclass shouldAutoPutRoute ]
+		thenDo: [ :subclass | subclass putRouteToDefaultServer ]
+]
+
+{ #category : #actions }
+RpRipple class >> putRouteTo: aRippleServer [
+	aRippleServer addRoomOf: self
+]
+
+{ #category : #actions }
+RpRipple class >> putRouteToDefaultServer [
+	<script>
+	self putRouteTo: RpServer default
+]
+
+{ #category : #testing }
+RpRipple class >> shouldAutoPutRoute [
+	^ true
+]
+
 { #category : #'instance creation' }
 RpRipple class >> room [
 	^ RpRippleRoom name: self roomName rippleClass: self
