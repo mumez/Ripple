@@ -4,6 +4,11 @@ Class {
 	#category : #'Ripple-Core-Tests'
 }
 
+{ #category : #testing }
+RpGenericErrorRipple class >> shouldAutoPutRoute [
+	^ false
+]
+
 { #category : #accessing }
 RpGenericErrorRipple class >> roomName [
 	^ 'generic-error-test'
