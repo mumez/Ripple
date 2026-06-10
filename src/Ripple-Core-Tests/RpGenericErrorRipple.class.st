@@ -18,3 +18,8 @@ RpGenericErrorRipple class >> roomName [
 RpGenericErrorRipple >> handleRequest: aMessage [
 	Error signal: 'generic error'
 ]
+
+{ #category : #'message handling' }
+RpGenericErrorRipple >> handleSend: aMessage [
+	Error signal: 'generic error on send'
+]

@@ -59,11 +59,7 @@ RpMessageDispatcher >> dispatchRequest [
 	ripple ifNil: [
 		self sendNoSessionErrorFor: self message.
 		^ self ].
-	[ [ ripple handleRequest: self message ]
-		on: RpError
-		do: [ :ex | self sendApplicationErrorFor: self message error: ex ] ]
-		on: Error
-		do: [ :ex | self sendHandlerErrorFor: self message message: ex messageText ]
+	self safeHandle: [ ripple handleRequest: self message ]
 ]
 
 { #category : #dispatching }
@@ -73,7 +69,7 @@ RpMessageDispatcher >> dispatchSend [
 	ripple ifNil: [
 		self sendNoSessionErrorFor: self message.
 		^ self ].
-	ripple handleSend: self message
+	self safeHandle: [ ripple handleSend: self message ]
 ]
 
 { #category : #dispatching }
@@ -134,6 +130,15 @@ RpMessageDispatcher >> sendHandlerErrorFor: aMessage message: errorMessage [
 { #category : #'error sending' }
 RpMessageDispatcher >> sendNoSessionErrorFor: aMessage [
 	self originatorSocket sendError: RpError noSession for: aMessage
+]
+
+{ #category : #private }
+RpMessageDispatcher >> safeHandle: aHandlerBlock [
+	[ [ aHandlerBlock value ]
+		on: RpError
+		do: [ :ex | self sendApplicationErrorFor: self message error: ex ] ]
+		on: Error
+		do: [ :ex | self sendHandlerErrorFor: self message message: ex messageText ]
 ]
 
 { #category : #accessing }
