@@ -109,10 +109,23 @@ MyEchoRipple >> handleRequest: aMessage [
 
 ### 4. Register the handler
 
+Routes are registered **automatically** on image startup. When the image starts, `RpRipple autoPutAllRoutesToDefaultServer` is called and every `RpRipple` subclass whose `shouldAutoPutRoute` returns `true` (the default) is added to `RpServer default`.
+
+No extra code is required for the common case. If you need to register a route manually — e.g. during a live session before restarting — you can still do so explicitly:
+
 ```smalltalk
-| server |
-server := RpServer default.
-server addRoomOf: MyEchoRipple.
+MyEchoRipple putRouteToDefaultServer.
+
+"Or to a specific server instance:"
+MyEchoRipple putRouteTo: myServer.
+```
+
+To exclude a subclass from auto-registration (useful for test helpers), override `shouldAutoPutRoute`:
+
+```smalltalk
+MyEchoRipple class >> shouldAutoPutRoute [
+    ^ false
+]
 ```
 
 ### 5. Connect from the browser
