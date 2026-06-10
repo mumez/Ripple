@@ -23,8 +23,3 @@ RpGenericErrorRipple >> handleRequest: aMessage [
 RpGenericErrorRipple >> handleSend: aMessage [
 	Error signal: 'generic error on send'
 ]
-
-{ #category : #'message handling' }
-RpGenericErrorRipple >> handleSend: aMessage [
-	Error signal: 'generic error on send'
-]

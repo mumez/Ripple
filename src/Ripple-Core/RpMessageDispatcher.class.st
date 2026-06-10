@@ -73,16 +73,6 @@ RpMessageDispatcher >> dispatchSend [
 ]
 
 { #category : #dispatching }
-RpMessageDispatcher >> dispatchSend [
-	| ripple |
-	ripple := self handler rippleFor: self originatorSocket.
-	ripple ifNil: [
-		self sendNoSessionErrorFor: self message.
-		^ self ].
-	self safeHandle: [ ripple handleSend: self message ]
-]
-
-{ #category : #dispatching }
 RpMessageDispatcher >> dispatchUnregister [
 	self handler lock critical: [
 		| subscribers |
