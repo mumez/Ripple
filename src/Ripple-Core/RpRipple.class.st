@@ -79,3 +79,8 @@ RpRipple >> webSocket [
 RpRipple >> webSocket: anObject [
 	webSocket := anObject
 ]
+
+{ #category : #'lifecycle' }
+RpRipple >> unregistered [
+	"Hook called when this ripple is unregistered from the handler. Subclasses can override."
+]

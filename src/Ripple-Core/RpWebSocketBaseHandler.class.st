@@ -252,7 +252,9 @@ RpWebSocketBaseHandler >> settings: anRpSettings [
 RpWebSocketBaseHandler >> unregister: clientWebSocket [
 	lock
 		critical: [
-			self ripples removeKey: clientWebSocket token ifAbsent: [  ] ]
+			| ripple |
+			ripple := self ripples removeKey: clientWebSocket token ifAbsent: [ nil ].
+			ripple ifNotNil: [ ripple unregistered ] ]
 ]
 
 { #category : 'private' }
