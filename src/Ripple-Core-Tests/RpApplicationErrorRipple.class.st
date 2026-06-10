@@ -18,3 +18,8 @@ RpApplicationErrorRipple class >> roomName [
 RpApplicationErrorRipple >> handleRequest: aMessage [
 	(RpError application: 'app error') signal
 ]
+
+{ #category : #'message handling' }
+RpApplicationErrorRipple >> handleSend: aMessage [
+	(RpError application: 'app error on send') signal
+]

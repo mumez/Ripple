@@ -172,3 +172,143 @@ RpMessageDispatcherTest >> testDispatchUnregisterRemovesSubscription [
 	unreg dispatch.
 	self assert: ((handler subscriptionDict at: 'topic.x' ifAbsent: [ Set new ]) includes: mockSocket) not
 ]
+
+{ #category : #tests }
+RpMessageDispatcherTest >> testDispatchSendRpErrorSentAsApplicationError [
+	| localHandler localSocket msg dispatcher |
+	localHandler := RpWebSocketEventBusHandler new.
+	localHandler rippleClass: RpApplicationErrorRipple.
+	localSocket := RpMockSocket new token: 'err-tok'.
+	localHandler register: localSocket.
+	msg := RpMessage fromJsonString: '{"type":"send","address":"a","body":{"x":1}}'.
+	dispatcher := RpMessageDispatcher message: msg socket: localSocket handler: localHandler.
+	dispatcher dispatch.
+	self assert: (localSocket lastMessage at: 'type') equals: 'err'.
+	self assert: (localSocket lastMessage at: 'failureType') equals: 'application'
+]
+
+{ #category : #tests }
+RpMessageDispatcherTest >> testDispatchSendGenericErrorSentAsHandlerError [
+	| localHandler localSocket msg dispatcher |
+	localHandler := RpWebSocketEventBusHandler new.
+	localHandler rippleClass: RpGenericErrorRipple.
+	localSocket := RpMockSocket new token: 'err-tok'.
+	localHandler register: localSocket.
+	msg := RpMessage fromJsonString: '{"type":"send","address":"a","body":{"x":1}}'.
+	dispatcher := RpMessageDispatcher message: msg socket: localSocket handler: localHandler.
+	dispatcher dispatch.
+	self assert: (localSocket lastMessage at: 'type') equals: 'err'.
+	self assert: (localSocket lastMessage at: 'failureType') equals: 'HandlerError'
+]
+
+{ #category : #tests }
+RpMessageDispatcherTest >> testDispatchSendRpErrorSentAsApplicationError [
+	| localHandler localSocket msg dispatcher |
+	localHandler := RpWebSocketEventBusHandler new.
+	localHandler rippleClass: RpApplicationErrorRipple.
+	localSocket := RpMockSocket new token: 'err-tok'.
+	localHandler register: localSocket.
+	msg := RpMessage fromJsonString: '{"type":"send","address":"a","body":{"x":1}}'.
+	dispatcher := RpMessageDispatcher message: msg socket: localSocket handler: localHandler.
+	dispatcher dispatch.
+	self assert: (localSocket lastMessage at: 'type') equals: 'err'.
+	self assert: (localSocket lastMessage at: 'failureType') equals: 'application'
+]
+
+{ #category : #tests }
+RpMessageDispatcherTest >> testDispatchSendGenericErrorSentAsHandlerError [
+	| localHandler localSocket msg dispatcher |
+	localHandler := RpWebSocketEventBusHandler new.
+	localHandler rippleClass: RpGenericErrorRipple.
+	localSocket := RpMockSocket new token: 'err-tok'.
+	localHandler register: localSocket.
+	msg := RpMessage fromJsonString: '{"type":"send","address":"a","body":{"x":1}}'.
+	dispatcher := RpMessageDispatcher message: msg socket: localSocket handler: localHandler.
+	dispatcher dispatch.
+	self assert: (localSocket lastMessage at: 'type') equals: 'err'.
+	self assert: (localSocket lastMessage at: 'failureType') equals: 'HandlerError'
+]
+
+{ #category : #tests }
+RpMessageDispatcherTest >> testDispatchSendRpErrorSentAsApplicationError [
+	| localHandler localSocket msg dispatcher |
+	localHandler := RpWebSocketEventBusHandler new.
+	localHandler rippleClass: RpApplicationErrorRipple.
+	localSocket := RpMockSocket new token: 'err-tok'.
+	localHandler register: localSocket.
+	msg := RpMessage fromJsonString: '{"type":"send","address":"a","body":{"x":1}}'.
+	dispatcher := RpMessageDispatcher message: msg socket: localSocket handler: localHandler.
+	dispatcher dispatch.
+	self assert: (localSocket lastMessage at: 'type') equals: 'err'.
+	self assert: (localSocket lastMessage at: 'failureType') equals: 'application'
+]
+
+{ #category : #tests }
+RpMessageDispatcherTest >> testDispatchSendGenericErrorSentAsHandlerError [
+	| localHandler localSocket msg dispatcher |
+	localHandler := RpWebSocketEventBusHandler new.
+	localHandler rippleClass: RpGenericErrorRipple.
+	localSocket := RpMockSocket new token: 'err-tok'.
+	localHandler register: localSocket.
+	msg := RpMessage fromJsonString: '{"type":"send","address":"a","body":{"x":1}}'.
+	dispatcher := RpMessageDispatcher message: msg socket: localSocket handler: localHandler.
+	dispatcher dispatch.
+	self assert: (localSocket lastMessage at: 'type') equals: 'err'.
+	self assert: (localSocket lastMessage at: 'failureType') equals: 'HandlerError'
+]
+
+{ #category : #tests }
+RpMessageDispatcherTest >> testDispatchSendRpErrorSentAsApplicationError [
+	| localHandler localSocket msg dispatcher |
+	localHandler := RpWebSocketEventBusHandler new.
+	localHandler rippleClass: RpApplicationErrorRipple.
+	localSocket := RpMockSocket new token: 'err-tok'.
+	localHandler register: localSocket.
+	msg := RpMessage fromJsonString: '{"type":"send","address":"a","body":{"x":1}}'.
+	dispatcher := RpMessageDispatcher message: msg socket: localSocket handler: localHandler.
+	dispatcher dispatch.
+	self assert: (localSocket lastMessage at: 'type') equals: 'err'.
+	self assert: (localSocket lastMessage at: 'failureType') equals: 'application'
+]
+
+{ #category : #tests }
+RpMessageDispatcherTest >> testDispatchSendGenericErrorSentAsHandlerError [
+	| localHandler localSocket msg dispatcher |
+	localHandler := RpWebSocketEventBusHandler new.
+	localHandler rippleClass: RpGenericErrorRipple.
+	localSocket := RpMockSocket new token: 'err-tok'.
+	localHandler register: localSocket.
+	msg := RpMessage fromJsonString: '{"type":"send","address":"a","body":{"x":1}}'.
+	dispatcher := RpMessageDispatcher message: msg socket: localSocket handler: localHandler.
+	dispatcher dispatch.
+	self assert: (localSocket lastMessage at: 'type') equals: 'err'.
+	self assert: (localSocket lastMessage at: 'failureType') equals: 'HandlerError'
+]
+
+{ #category : #tests }
+RpMessageDispatcherTest >> testDispatchSendRpErrorSentAsApplicationError [
+	| localHandler localSocket msg dispatcher |
+	localHandler := RpWebSocketEventBusHandler new.
+	localHandler rippleClass: RpApplicationErrorRipple.
+	localSocket := RpMockSocket new token: 'err-tok'.
+	localHandler register: localSocket.
+	msg := RpMessage fromJsonString: '{"type":"send","address":"a","body":{"x":1}}'.
+	dispatcher := RpMessageDispatcher message: msg socket: localSocket handler: localHandler.
+	dispatcher dispatch.
+	self assert: (localSocket lastMessage at: 'type') equals: 'err'.
+	self assert: (localSocket lastMessage at: 'failureType') equals: 'application'
+]
+
+{ #category : #tests }
+RpMessageDispatcherTest >> testDispatchSendGenericErrorSentAsHandlerError [
+	| localHandler localSocket msg dispatcher |
+	localHandler := RpWebSocketEventBusHandler new.
+	localHandler rippleClass: RpGenericErrorRipple.
+	localSocket := RpMockSocket new token: 'err-tok'.
+	localHandler register: localSocket.
+	msg := RpMessage fromJsonString: '{"type":"send","address":"a","body":{"x":1}}'.
+	dispatcher := RpMessageDispatcher message: msg socket: localSocket handler: localHandler.
+	dispatcher dispatch.
+	self assert: (localSocket lastMessage at: 'type') equals: 'err'.
+	self assert: (localSocket lastMessage at: 'failureType') equals: 'HandlerError'
+]
