@@ -111,3 +111,20 @@ RpRippleRoomTest >> testRoomUsesRippleClassRoomSettings [
 	room := RpRippleRoom name: 'test' rippleClass: RpTestRipple.
 	self assert: room settings allowClientPublish
 ]
+
+{ #category : #tests }
+RpRippleRoomTest >> testRippleRoomIsSameObjectForAllRipplesInRoom [
+	| room handler socket1 socket2 ripple1 ripple2 |
+	room := RpRippleRoom name: 'chat' rippleClass: RpRipple.
+	handler := room handler.
+	socket1 := RpMockSocket new token: 'tok-1'.
+	socket2 := RpMockSocket new token: 'tok-2'.
+	socket1 baseHandler: handler.
+	socket2 baseHandler: handler.
+	handler register: socket1.
+	handler register: socket2.
+	ripple1 := handler rippleFor: socket1.
+	ripple2 := handler rippleFor: socket2.
+	self assert: ripple1 room == room.
+	self assert: ripple2 room == room
+]

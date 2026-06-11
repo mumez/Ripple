@@ -1,3 +1,31 @@
+"
+I represent a per-session WebSocket endpoint, wrapping an active connection
+and providing the message-handling API for Ripple applications.
+
+Responsibility:
+- I hold the WebSocket connection for a single authenticated session (keyed by token)
+- I delegate message handling to subclass hooks (handleSend:, handleRequest:)
+- I provide access to the handler and room I belong to via baseHandler and room
+- Subclasses define the room name and customize message handling behaviour
+
+Collaborators:
+- RpWebSocket: the underlying connection I wrap
+- RpWebSocketBaseHandler: the handler managing all connections in my room (via baseHandler)
+- RpRippleRoom: the room configuration I belong to (via room)
+
+Public API and Key Messages:
+- #handleSend: - override to handle incoming send-type messages
+- #handleRequest: - override to handle request/reply messages
+- #baseHandler - returns the RpWebSocketBaseHandler managing this connection
+- #room - returns the RpRippleRoom this ripple belongs to
+- #token - returns the session authentication token
+- #unregistered - lifecycle hook called on disconnect; override for cleanup
+
+Class-side:
+- #on: aWebSocket - factory; creates an instance for the given connection
+- #roomName - subclass responsibility; defines the WebSocket path segment
+- #roomSettings - override to provide custom RpRoomSettings
+"
 Class {
 	#name : #RpRipple,
 	#superclass : #Object,
@@ -63,6 +91,26 @@ RpRipple >> handleRequest: aMessage [
 
 { #category : #'message handling' }
 RpRipple >> handleSend: aMessage [
+]
+
+{ #category : #actions }
+RpRipple >> publish: jsonDict to: address [
+	^ self webSocket publish: jsonDict to: address
+]
+
+{ #category : #actions }
+RpRipple >> send: jsonDict to: address [
+	^ self webSocket send: jsonDict to: address
+]
+
+{ #category : #accessing }
+RpRipple >> baseHandler [
+	^ self webSocket baseHandler
+]
+
+{ #category : #accessing }
+RpRipple >> room [
+	^ self baseHandler rippleRoom
 ]
 
 { #category : #accessing }
