@@ -1,3 +1,37 @@
+"
+I am a thread-safe connection registry that maps authentication tokens to RpRipple
+session objects, managing the full lifecycle of WebSocket connections within a room.
+
+Responsibility:
+- I register and unregister WebSocket connections, maintaining a token-to-RpRipple dictionary
+- I dispatch incoming raw messages to the appropriate ripple's handler
+- I hold a back-reference to the RpRippleRoom that created me (rippleRoom)
+- Subclasses extend dispatching behaviour (e.g. RpWebSocketEventBusHandler adds pub/sub)
+
+Collaborators:
+- RpRipple: per-session objects I create and manage
+- RpRippleRoom: the room configuration that created this handler (via rippleRoom)
+- Mutex: serialises all access to the ripples dictionary
+- RpLocalLogger: reports warnings on connection errors
+
+Public API and Key Messages:
+- #register: / #unregister: - connection lifecycle management
+- #rippleFor: aWebSocket - look up the RpRipple for a socket
+- #runWith: aWebSocket - main loop; register, dispatch messages, unregister on error
+- #rippleRoom / #rippleRoom: - the RpRippleRoom that owns this handler
+- #rippleClass / #rippleClass: - the RpRipple subclass used for new sessions
+
+Internal Representation:
+- ripples - Dictionary mapping token strings to RpRipple instances
+- lock - Mutex serialising all mutations to ripples
+- rippleRoom - back-reference to the RpRippleRoom that created this handler
+- rippleClass - class used to instantiate new RpRipple session objects
+
+Implementation Points:
+- Instances are cached by name in the class-side handlers Dictionary; use #handlerNamed: or #shared
+- All mutations to ripples must be wrapped in lock critical: [...]
+- #validateToken: currently accepts any non-empty string; override for real authentication
+"
 Class {
 	#name : 'RpWebSocketBaseHandler',
 	#superclass : 'Object',
@@ -6,6 +40,7 @@ Class {
 		'logger',
 		'ripples',
 		'rippleClass',
+		'rippleRoom',
 		'settings'
 	],
 	#classInstVars : [
@@ -117,6 +152,16 @@ RpWebSocketBaseHandler >> rippleClass [
 { #category : 'accessing' }
 RpWebSocketBaseHandler >> rippleClass: aClass [
 	rippleClass := aClass
+]
+
+{ #category : 'accessing' }
+RpWebSocketBaseHandler >> rippleRoom [
+	^ rippleRoom
+]
+
+{ #category : 'accessing' }
+RpWebSocketBaseHandler >> rippleRoom: anRpRippleRoom [
+	rippleRoom := anRpRippleRoom
 ]
 
 { #category : 'accessing' }
