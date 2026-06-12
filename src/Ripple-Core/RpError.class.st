@@ -29,6 +29,11 @@ RpError class >> application: aMessage [
 ]
 
 { #category : #'instance creation' }
+RpError class >> application: aMessage code: aCode [
+	^ self code: aCode type: 'application' message: aMessage
+]
+
+{ #category : #'instance creation' }
 RpError class >> forbidden [
 	^ self code: 403 type: 'Forbidden' message: 'Client publish is not allowed'
 ]

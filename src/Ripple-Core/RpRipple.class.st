@@ -30,6 +30,7 @@ Class {
 	#name : #RpRipple,
 	#superclass : #Object,
 	#instVars : [
+		'errorCount',
 		'webSocket'
 	],
 	#category : #'Ripple-Core'
@@ -79,7 +80,23 @@ RpRipple class >> roomSettings [
 RpRipple class >> on: aWebSocket [
 	^ self new
 		webSocket: aWebSocket;
+		resetErrorCount;
 		yourself
+]
+
+{ #category : #'message handling' }
+RpRipple >> handleNetworkError: anException during: anOperation [
+	errorCount := errorCount + 1.
+	self logger
+		warn: {
+			self class name.
+			anOperation.
+			'errorCount: ', errorCount printString.
+			anException description }.
+	errorCount >= self maxErrorCount
+		ifTrue: [
+			self logger warn: { self class name. #maxErrorCountReached. 'unregistering'. self token }.
+			self unregister ]
 ]
 
 { #category : #'message handling' }
@@ -95,12 +112,36 @@ RpRipple >> handleSend: aMessage [
 
 { #category : #actions }
 RpRipple >> publish: jsonDict to: address [
-	^ self webSocket publish: jsonDict to: address
+	[ ^ self webSocket publish: jsonDict to: address ]
+		on: NetworkError
+		do: [ :ex | self handleNetworkError: ex during: #publish ]
 ]
 
 { #category : #actions }
 RpRipple >> send: jsonDict to: address [
-	^ self webSocket send: jsonDict to: address
+	[ ^ self webSocket send: jsonDict to: address ]
+		on: NetworkError
+		do: [ :ex | self handleNetworkError: ex during: #send ]
+]
+
+{ #category : #accessing }
+RpRipple >> errorCount [
+	^ errorCount
+]
+
+{ #category : #accessing }
+RpRipple >> logger [
+	^ self baseHandler logger
+]
+
+{ #category : #accessing }
+RpRipple >> maxErrorCount [
+	^ self baseHandler settings maxErrorCount
+]
+
+{ #category : #private }
+RpRipple >> resetErrorCount [
+	errorCount := 0
 ]
 
 { #category : #accessing }
@@ -131,4 +172,9 @@ RpRipple >> webSocket: anObject [
 { #category : #'lifecycle' }
 RpRipple >> unregistered [
 	"Hook called when this ripple is unregistered from the handler. Subclasses can override."
+]
+
+{ #category : #'lifecycle' }
+RpRipple >> unregister [
+	self baseHandler unregister: self webSocket
 ]

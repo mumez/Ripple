@@ -90,6 +90,26 @@ RpMockSocket >> sentMessages [
 	^ sentMessages
 ]
 
+{ #category : #sending }
+RpMockSocket >> publish: jsonDict to: address [
+	NetworkError signal: 'Mock network error on publish'
+]
+
+{ #category : #sending }
+RpMockSocket >> send: jsonDict to: address [
+	NetworkError signal: 'Mock network error on send'
+]
+
+{ #category : #sending }
+RpMockSocket >> publish: jsonDict to: address [
+	NetworkError signal: 'Mock network error on publish'
+]
+
+{ #category : #sending }
+RpMockSocket >> send: jsonDict to: address [
+	NetworkError signal: 'Mock network error on send'
+]
+
 { #category : #accessing }
 RpMockSocket >> token [
 	^ myToken

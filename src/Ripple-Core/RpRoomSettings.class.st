@@ -17,5 +17,15 @@ RpRoomSettings >> allowClientPublish: aBoolean [
 
 { #category : 'accessing-keys' }
 RpRoomSettings >> definedSettingsKeys [
-	^ #(#allowClientPublish)
+	^ #(#allowClientPublish #maxErrorCount)
+]
+
+{ #category : 'accessing' }
+RpRoomSettings >> maxErrorCount [
+	^ self at: #maxErrorCount ifAbsentPut: [ 5 ]
+]
+
+{ #category : 'accessing' }
+RpRoomSettings >> maxErrorCount: anInteger [
+	self at: #maxErrorCount put: anInteger
 ]
