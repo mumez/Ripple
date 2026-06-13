@@ -214,8 +214,8 @@ RpWebSocketBaseHandler >> unregister: clientWebSocket [
 
 { #category : 'private' }
 RpWebSocketBaseHandler >> validateToken: aToken [
+	self rippleRoom ifNotNil: [ ^ self rippleRoom validateToken: aToken ].
 	aToken isEmptyOrNil ifTrue: [ ^ false ].
-
 	^ true
 ]
 

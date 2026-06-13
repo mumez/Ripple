@@ -60,9 +60,24 @@ RpRipple class >> shouldAutoPutRoute [
 	^ true
 ]
 
+{ #category : #accessing }
+RpRipple class >> roomClass [
+	^ RpRippleRoom
+]
+
+{ #category : #accessing }
+RpRipple class >> roomClass [
+	^ RpRippleRoom
+]
+
+{ #category : #accessing }
+RpRipple class >> roomClass [
+	^ RpRippleRoom
+]
+
 { #category : #'instance creation' }
 RpRipple class >> room [
-	^ RpRippleRoom name: self roomName rippleClass: self
+	^ self roomClass name: self roomName rippleClass: self
 ]
 
 { #category : #accessing }
