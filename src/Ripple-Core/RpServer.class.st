@@ -3,7 +3,8 @@ Class {
 	#superclass : #Object,
 	#instVars : [
 		'teapot',
-		'settings'
+		'settings',
+		'roomsDict'
 	],
 	#classInstVars : [
 		'default'
@@ -60,6 +61,7 @@ RpServer >> addDefaultRoutes [
 
 { #category : #routing }
 RpServer >> addRoom: aRippleRoom [
+	self roomsDict at: aRippleRoom name put: aRippleRoom.
 	aRippleRoom addedTo: self
 ]
 
@@ -119,4 +121,24 @@ RpServer >> teapot [
 { #category : #accessing }
 RpServer >> teapot: anObject [
 	teapot := anObject
+]
+
+{ #category : #'accessing-rooms' }
+RpServer >> roomsDict [
+	^ roomsDict ifNil: [ roomsDict := Dictionary new ]
+]
+
+{ #category : #'accessing-rooms' }
+RpServer >> rooms [
+	^ self roomsDict values
+]
+
+{ #category : #'accessing-rooms' }
+RpServer >> roomNames [
+	^ self roomsDict keys
+]
+
+{ #category : #'accessing-rooms' }
+RpServer >> roomNamed: aString [
+	^ self roomsDict at: aString ifAbsent: [ nil ]
 ]
