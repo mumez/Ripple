@@ -99,6 +99,12 @@ RpRippleRoom >> rippleClass: aClass [
 	rippleClass := aClass
 ]
 
+{ #category : #'token-validation' }
+RpRippleRoom >> validateToken: aToken [
+	aToken isEmptyOrNil ifTrue: [ ^ false ].
+	^ true
+]
+
 { #category : #accessing }
 RpRippleRoom >> settings [
 	^ settings ifNil: [ settings := self rippleClass roomSettings ]
