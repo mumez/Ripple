@@ -48,7 +48,7 @@ RpWebSocketBaseHandlerTest >> testValidateTokenDelegatesToRippleRoom [
 	handler := RpWebSocketBaseHandler new.
 	room := RpMockRippleRoom name: 'mock' rippleClass: RpMockRipple.
 	handler rippleRoom: room.
-	
+
 	self assert: (handler validateToken: 'mock-token').
 	self deny: (handler validateToken: 'invalid-token')
 ]
@@ -58,117 +58,7 @@ RpWebSocketBaseHandlerTest >> testValidateTokenFallsBackWhenRippleRoomIsNil [
 	| handler |
 	handler := RpWebSocketBaseHandler new.
 	handler rippleRoom: nil.
-	
-	self assert: (handler validateToken: 'any-token').
-	self deny: (handler validateToken: '').
-	self deny: (handler validateToken: nil)
-]
 
-{ #category : #tests }
-RpWebSocketBaseHandlerTest >> testValidateTokenDelegatesToRippleRoom [
-	| handler room |
-	handler := RpWebSocketBaseHandler new.
-	room := RpMockRippleRoom name: 'mock' rippleClass: RpMockRipple.
-	handler rippleRoom: room.
-	
-	self assert: (handler validateToken: 'mock-token').
-	self deny: (handler validateToken: 'invalid-token')
-]
-
-{ #category : #tests }
-RpWebSocketBaseHandlerTest >> testValidateTokenFallsBackWhenRippleRoomIsNil [
-	| handler |
-	handler := RpWebSocketBaseHandler new.
-	handler rippleRoom: nil.
-	
-	self assert: (handler validateToken: 'any-token').
-	self deny: (handler validateToken: '').
-	self deny: (handler validateToken: nil)
-]
-
-{ #category : #tests }
-RpWebSocketBaseHandlerTest >> testValidateTokenDelegatesToRippleRoom [
-	| handler room |
-	handler := RpWebSocketBaseHandler new.
-	room := RpMockRippleRoom name: 'mock' rippleClass: RpMockRipple.
-	handler rippleRoom: room.
-	
-	self assert: (handler validateToken: 'mock-token').
-	self deny: (handler validateToken: 'invalid-token')
-]
-
-{ #category : #tests }
-RpWebSocketBaseHandlerTest >> testValidateTokenFallsBackWhenRippleRoomIsNil [
-	| handler |
-	handler := RpWebSocketBaseHandler new.
-	handler rippleRoom: nil.
-	
-	self assert: (handler validateToken: 'any-token').
-	self deny: (handler validateToken: '').
-	self deny: (handler validateToken: nil)
-]
-
-{ #category : #tests }
-RpWebSocketBaseHandlerTest >> testValidateTokenDelegatesToRippleRoom [
-	| handler room |
-	handler := RpWebSocketBaseHandler new.
-	room := RpMockRippleRoom name: 'mock' rippleClass: RpMockRipple.
-	handler rippleRoom: room.
-	
-	self assert: (handler validateToken: 'mock-token').
-	self deny: (handler validateToken: 'invalid-token')
-]
-
-{ #category : #tests }
-RpWebSocketBaseHandlerTest >> testValidateTokenFallsBackWhenRippleRoomIsNil [
-	| handler |
-	handler := RpWebSocketBaseHandler new.
-	handler rippleRoom: nil.
-	
-	self assert: (handler validateToken: 'any-token').
-	self deny: (handler validateToken: '').
-	self deny: (handler validateToken: nil)
-]
-
-{ #category : #tests }
-RpWebSocketBaseHandlerTest >> testValidateTokenDelegatesToRippleRoom [
-	| handler room |
-	handler := RpWebSocketBaseHandler new.
-	room := RpMockRippleRoom name: 'mock' rippleClass: RpMockRipple.
-	handler rippleRoom: room.
-	
-	self assert: (handler validateToken: 'mock-token').
-	self deny: (handler validateToken: 'invalid-token')
-]
-
-{ #category : #tests }
-RpWebSocketBaseHandlerTest >> testValidateTokenFallsBackWhenRippleRoomIsNil [
-	| handler |
-	handler := RpWebSocketBaseHandler new.
-	handler rippleRoom: nil.
-	
-	self assert: (handler validateToken: 'any-token').
-	self deny: (handler validateToken: '').
-	self deny: (handler validateToken: nil)
-]
-
-{ #category : #tests }
-RpWebSocketBaseHandlerTest >> testValidateTokenDelegatesToRippleRoom [
-	| handler room |
-	handler := RpWebSocketBaseHandler new.
-	room := RpMockRippleRoom name: 'mock' rippleClass: RpMockRipple.
-	handler rippleRoom: room.
-	
-	self assert: (handler validateToken: 'mock-token').
-	self deny: (handler validateToken: 'invalid-token')
-]
-
-{ #category : #tests }
-RpWebSocketBaseHandlerTest >> testValidateTokenFallsBackWhenRippleRoomIsNil [
-	| handler |
-	handler := RpWebSocketBaseHandler new.
-	handler rippleRoom: nil.
-	
 	self assert: (handler validateToken: 'any-token').
 	self deny: (handler validateToken: '').
 	self deny: (handler validateToken: nil)

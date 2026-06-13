@@ -133,37 +133,7 @@ RpRippleRoomTest >> testRippleRoomIsSameObjectForAllRipplesInRoom [
 RpRippleRoomTest >> testValidateTokenDefaultBehavior [
 	| room |
 	room := RpRippleRoom name: 'test' rippleClass: RpRipple.
-	
-	self assert: (room validateToken: 'valid-token').
-	self deny: (room validateToken: '').
-	self deny: (room validateToken: nil)
-]
 
-{ #category : #tests }
-RpRippleRoomTest >> testValidateTokenDefaultBehavior [
-	| room |
-	room := RpRippleRoom name: 'test' rippleClass: RpRipple.
-	
-	self assert: (room validateToken: 'valid-token').
-	self deny: (room validateToken: '').
-	self deny: (room validateToken: nil)
-]
-
-{ #category : #tests }
-RpRippleRoomTest >> testValidateTokenDefaultBehavior [
-	| room |
-	room := RpRippleRoom name: 'test' rippleClass: RpRipple.
-	
-	self assert: (room validateToken: 'valid-token').
-	self deny: (room validateToken: '').
-	self deny: (room validateToken: nil)
-]
-
-{ #category : #tests }
-RpRippleRoomTest >> testValidateTokenDefaultBehavior [
-	| room |
-	room := RpRippleRoom name: 'test' rippleClass: RpRipple.
-	
 	self assert: (room validateToken: 'valid-token').
 	self deny: (room validateToken: '').
 	self deny: (room validateToken: nil)

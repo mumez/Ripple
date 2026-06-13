@@ -65,16 +65,6 @@ RpRipple class >> roomClass [
 	^ RpRippleRoom
 ]
 
-{ #category : #accessing }
-RpRipple class >> roomClass [
-	^ RpRippleRoom
-]
-
-{ #category : #accessing }
-RpRipple class >> roomClass [
-	^ RpRippleRoom
-]
-
 { #category : #'instance creation' }
 RpRipple class >> room [
 	^ self roomClass name: self roomName rippleClass: self
