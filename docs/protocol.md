@@ -10,7 +10,7 @@ Connect to a Ripple endpoint by opening a WebSocket with a `token` query paramet
 ws://host:port/ws/<path>?token=<your-token>
 ```
 
-The token identifies the session. Any non-empty string is accepted. The server responds with the WebSocket upgrade using the subprotocol header:
+The token identifies the session. By default, any non-empty string is accepted. To enforce custom validation (e.g. JWT verification), override `validateToken:` on your `RpRippleRoom` subclass. The server responds with the WebSocket upgrade using the subprotocol header:
 
 ```
 Sec-WebSocket-Protocol: ripple-st.0
@@ -240,7 +240,7 @@ Sent when a `request` or `send` cannot be handled.
 | `Forbidden` | 403 | Client sent a `publish` message but `allowClientPublish` is `false` on the server |
 | `HandlerError` | 500 | The application handler (`handleRequest:` or `handleSend:`) raised an unhandled exception |
 | `general` | 0 | Generic server-side error with no specific category |
-| `application` | 10000 | Application-level error explicitly raised by the handler |
+| `application` | ≥ 10000 | Application-level error explicitly raised by the handler; code is freely chosen by the application (10000 or above) |
 
 > **Note:** Messages with an unknown or missing `type` are silently ignored on the server side (no `err` is sent; a warning is logged internally).
 
