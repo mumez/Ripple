@@ -268,32 +268,3 @@ Client                          Server
   |-- close ----------------------|  RpRipple removed; all subscriptions cleaned up
 ```
 
-## Extending the Protocol
-
-To add a new endpoint, subclass `RpRipple`, declare `roomName`, and implement `handleRequest:` and/or `handleSend:`:
-
-```smalltalk
-RpRipple subclass: #MyEchoRipple
-    instanceVariableNames: ''
-    classVariableNames: ''
-    package: 'MyApp'.
-
-MyEchoRipple class >> roomName [
-    ^ '/ws/echo'
-]
-
-MyEchoRipple >> handleRequest: aMessage [
-    "aMessage address, aMessage body, aMessage headers, aMessage correlationId"
-    self webSocket sendReply: { 'ok' -> true } asDictionary for: aMessage
-]
-
-MyEchoRipple >> handleSend: aMessage [
-    "handle one-way events here"
-]
-```
-
-Register on the server:
-
-```smalltalk
-server addRoomOf: MyEchoRipple.
-```
