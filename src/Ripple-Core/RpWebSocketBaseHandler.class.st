@@ -89,7 +89,7 @@ RpWebSocketBaseHandler >> dispatchMessage: rawMessage with: webSocket [
 
 { #category : 'handling' }
 RpWebSocketBaseHandler >> distributeMessage: message [
-	lock
+	self lock
 		critical: [
 			self webSockets valuesDo: [ :each |
 				[ each sendMessage: message ]
@@ -137,7 +137,7 @@ RpWebSocketBaseHandler >> logger: anObject [
 { #category : 'registering' }
 RpWebSocketBaseHandler >> register: clientWebSocket [
 
-	lock critical: [
+	self lock critical: [
 		| token |
 		token := clientWebSocket token.
 		(self validateToken: token) ifTrue: [
@@ -205,7 +205,7 @@ RpWebSocketBaseHandler >> settings: anRpSettings [
 
 { #category : 'registering' }
 RpWebSocketBaseHandler >> unregister: clientWebSocket [
-	lock
+	self lock
 		critical: [
 			| ripple |
 			ripple := self ripples removeKey: clientWebSocket token ifAbsent: [ nil ].

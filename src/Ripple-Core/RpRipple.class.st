@@ -4,27 +4,32 @@ and providing the message-handling API for Ripple applications.
 
 Responsibility:
 - I hold the WebSocket connection for a single authenticated session (keyed by token)
-- I delegate message handling to subclass hooks (handleSend:, handleRequest:)
-- I provide access to the handler and room I belong to via baseHandler and room
+- I delegate message handling to subclass hooks (#handleSend:, #handleRequest:)
+- I provide access to the handler and room I belong to via #baseHandler and #room
 - Subclasses define the room name and customize message handling behaviour
 
 Collaborators:
 - RpWebSocket: the underlying connection I wrap
-- RpWebSocketBaseHandler: the handler managing all connections in my room (via baseHandler)
-- RpRippleRoom: the room configuration I belong to (via room)
+- RpWebSocketBaseHandler: the handler managing all connections in my room (via #baseHandler)
+- RpRippleRoom: the room configuration I belong to (via #room)
 
 Public API and Key Messages:
-- #handleSend: - override to handle incoming send-type messages
-- #handleRequest: - override to handle request/reply messages
-- #baseHandler - returns the RpWebSocketBaseHandler managing this connection
+- #handleSend: aMessage - override to handle incoming one-way messages
+- #handleRequest: aMessage - override to handle request/reply messages
+- #publish: jsonDict to: address - broadcast to all subscribers of address in this room
 - #room - returns the RpRippleRoom this ripple belongs to
 - #token - returns the session authentication token
 - #unregistered - lifecycle hook called on disconnect; override for cleanup
 
 Class-side:
-- #on: aWebSocket - factory; creates an instance for the given connection
-- #roomName - subclass responsibility; defines the WebSocket path segment
-- #roomSettings - override to provide custom RpRoomSettings
+- #roomName - subclass responsibility; defines the WebSocket path (e.g. '/ws/chat')
+- #roomSettings - override to provide custom RpRoomSettings for this room
+- #shouldAutoPutRoute - return false to exclude from automatic route registration (default: true)
+- #autoPutAllRoutesToDefaultServer - registers all auto-route subclasses on image startup
+
+Implementation Points:
+- Network errors during send/publish increment errorCount; on reaching maxErrorCount the session is unregistered
+- maxErrorCount is read from the room's RpRoomSettings (default: 5)
 "
 Class {
 	#name : #RpRipple,
@@ -91,14 +96,14 @@ RpRipple class >> on: aWebSocket [
 
 { #category : #'message handling' }
 RpRipple >> handleNetworkError: anException during: anOperation [
-	errorCount := errorCount + 1.
+	errorCount := self errorCount + 1.
 	self logger
 		warn: {
 			self class name.
 			anOperation.
-			'errorCount: ', errorCount printString.
+			'errorCount: ', self errorCount printString.
 			anException description }.
-	errorCount >= self maxErrorCount
+	self errorCount >= self maxErrorCount
 		ifTrue: [
 			self logger warn: { self class name. #maxErrorCountReached. 'unregistering'. self token }.
 			self unregister ]
