@@ -28,6 +28,7 @@ Metacello new
 ```
 
 **Dependencies** (loaded automatically):
+- [Teapot](https://github.com/zeroflag/teapot) — Micro web framework
 - [NeoJSON](https://github.com/svenvc/NeoJSON) — JSON serialization
 - [Zinc WebSocket](https://github.com/svenvc/zinc) — WebSocket transport
 
@@ -79,6 +80,7 @@ Each room's handler exposes `RpRoomSettings` via its `settings` accessor:
 | Setting | Default | Description |
 |---------|---------|-------------|
 | `allowClientPublish` | `false` | Allow clients to publish to arbitrary addresses |
+| `maxErrorCount` | `5` | Network errors before a session is auto-unregistered |
 
 Configure room settings by overriding `roomSettings` on your `RpRipple` subclass:
 
@@ -99,7 +101,7 @@ RpRipple subclass: #MyEchoRipple
     package: 'MyApp'.
 
 MyEchoRipple class >> roomName [
-    ^ '/ws/echo'
+    ^ 'echo'
 ]
 
 MyEchoRipple >> handleRequest: aMessage [
@@ -148,17 +150,21 @@ A full client library will be published as a separate repository.
 | `RpServer` | HTTP server (Teapot wrapper); registers WebSocket routes |
 | `RpWebSocketDelegate` | HTTP → WebSocket protocol upgrade |
 | `RpWebSocketResponse` | Preserves original HTTP request through upgrade handshake |
-| `RpWebSocket` | ZnWebSocket subclass; adds `sendReply:for:`, `sendPublish:to:`, `sendErrorFor:type:message:`, `sendPong` |
+| `RpWebSocket` | ZnWebSocket subclass; adds `sendReply:for:`, `sendPublish:to:`, `sendError:for:`, `sendPong`, `send:to:` |
 | `RpMessage` | Pure value object parsed from incoming JSON |
 | `RpMessageDispatcher` | Routes messages to the correct handler method by type |
+| `RpRippleRoom` | Binds a URL path, ripple class, and event bus handler into a deployable unit |
 | `RpRipple` | Per-session application logic; subclass to implement your handler |
+| `RpError` | Typed error value object; serialises to JSON error frames |
+| `RpLocalLogger` | Simple levelled logger (error/warn/debug) writing to Transcript |
 
 Handler class hierarchy:
 
 ```
 RpWebSocketBaseHandler        Connection registry (token → RpRipple); mutex-protected
   └─ RpWebSocketEventBusHandler   Pub/sub routing (subscriptionDict); token auto-register on connect
-          ·····>* RpRipple          Per-session instance (one per token); subclass per endpoint
+          ·····>* RpRippleRoom       Room config (name, rippleClass, settings); owns the handler
+                    ·····>* RpRipple   Per-session instance (one per token); subclass per endpoint
 ```
 
 ## Integration Testing

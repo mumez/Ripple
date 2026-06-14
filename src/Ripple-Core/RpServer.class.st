@@ -1,3 +1,34 @@
+"
+I am the HTTP/WebSocket server for a Ripple application, wrapping Teapot and managing
+a collection of RpRippleRoom instances.
+
+Responsibility:
+- I create and hold the Teapot HTTP server, configured from RpServerSettings
+- I register WebSocket routes by accepting RpRippleRoom objects via #addRoom:
+- I serve static assets from the configured assets directory
+- I register with Pharo's SessionManager to restart cleanly on image startup
+
+Collaborators:
+- Teapot: the underlying HTTP server I configure and delegate to
+- RpRippleRoom: room objects I accept and whose routes I register
+- RpServerSettings: configuration for port, bind address, debug mode, assets dir
+- RpRipple: subclasses auto-register their rooms on image startup via #autoPutAllRoutesToDefaultServer
+
+Public API and Key Messages:
+- #start / #stop / #reset - lifecycle management
+- #addRoom: aRippleRoom - register a room and its WebSocket route
+- #addRoomOf: aRippleClass - convenience; creates and registers aRippleClass room
+- #roomNamed: aString - look up a registered room by name
+- #settings - returns (lazily) the RpServerSettings for this server
+
+Class-side:
+- #default - returns (lazily creating and starting) the singleton server instance
+- #resetDefault - stops, clears, and restarts the default server
+
+Implementation Points:
+- The class-side default is a class instance variable, not a true Singleton; use #default: to inject a test server
+- On image startup, Teapot availability is checked before starting to allow headless images without HTTP
+"
 Class {
 	#name : #RpServer,
 	#superclass : #Object,

@@ -1,3 +1,30 @@
+"
+I am a ZnWebSocket subclass that adds Ripple-specific messaging and metadata access.
+
+Responsibility:
+- I send typed JSON messages: reply, publish, error, pong, send
+- I expose the original HTTP request/response for token and header extraction
+- I hold a back-reference to my RpWebSocketBaseHandler for room-level publish
+
+Collaborators:
+- ZnWebSocket: my superclass providing raw WebSocket framing
+- RpWebSocketResponse: the original upgrade response I hold to access request headers
+- RpWebSocketBaseHandler: accessed via baseHandler for #publish:to:
+- RpError: serialised to JSON and sent as error frames
+- NeoJSONWriter: serialises all outgoing messages to JSON text
+
+Public API and Key Messages:
+- #sendReply: bodyDict for: aMessage - correlated reply to a request
+- #sendPublish: replyDict to: address - broadcast envelope to a subscriber
+- #sendError: anRpError for: aMessage - error with optional correlationId
+- #sendPong - respond to a ping
+- #token - extracts the session token from the query string (or accept header fallback)
+- #publish: jsonDict to: address - delegates to handler for room-level broadcast
+
+Internal Representation:
+- originalResponse - RpWebSocketResponse holding the upgrade request/headers
+- baseHandler - the RpWebSocketEventBusHandler managing this connection
+"
 Class {
 	#name : #RpWebSocket,
 	#superclass : #ZnWebSocket,

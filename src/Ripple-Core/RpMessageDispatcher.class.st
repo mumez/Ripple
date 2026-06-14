@@ -1,3 +1,32 @@
+"
+I perform type-based routing of a single RpMessage, invoking the appropriate
+handler action on the originating socket, ripple, or event bus handler.
+
+Responsibility:
+- I inspect the message type and call the matching dispatch method
+- I look up the RpRipple session for request/send messages and delegate to it
+- I manage subscription registration and unregistration in the handler's subscriptionDict
+- I guard handler calls and send typed RpError responses on failure
+
+Collaborators:
+- RpMessage: the message I dispatch
+- RpWebSocket: the originating socket I send replies and errors to
+- RpWebSocketEventBusHandler: the handler I query for ripples and subscriptions
+- RpError: factory I use to build typed error responses
+
+Public API and Key Messages:
+- #dispatch - entry point; routes by message type
+- #settings - delegates to handler settings (used for allowClientPublish check)
+
+Internal Representation:
+- message - the RpMessage being dispatched
+- originatorSocket - the RpWebSocket that sent the message
+- handler - the RpWebSocketEventBusHandler managing this room
+
+Implementation Points:
+- #safeHandle: catches RpError (sent as application error) and generic Error (sent as handler error)
+- #dispatchRegister / #dispatchUnregister prune disconnected sockets as a side effect
+"
 Class {
 	#name : #RpMessageDispatcher,
 	#superclass : #Object,

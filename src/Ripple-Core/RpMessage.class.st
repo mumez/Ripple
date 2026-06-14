@@ -66,32 +66,32 @@ RpMessage >> headers: anObject [
 
 { #category : #testing }
 RpMessage >> isPing [
-	^ type = 'ping'
+	^ self type = 'ping'
 ]
 
 { #category : #testing }
 RpMessage >> isPublish [
-	^ type = 'publish'
+	^ self type = 'publish'
 ]
 
 { #category : #testing }
 RpMessage >> isRegister [
-	^ type = 'register'
+	^ self type = 'register'
 ]
 
 { #category : #testing }
 RpMessage >> isRequest [
-	^ type = 'request'
+	^ self type = 'request'
 ]
 
 { #category : #testing }
 RpMessage >> isSend [
-	^ type = 'send'
+	^ self type = 'send'
 ]
 
 { #category : #testing }
 RpMessage >> isUnregister [
-	^ type = 'unregister'
+	^ self type = 'unregister'
 ]
 
 { #category : #accessing }

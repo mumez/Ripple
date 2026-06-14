@@ -25,7 +25,7 @@ RpError class >> application [
 
 { #category : #'instance creation' }
 RpError class >> application: aMessage [
-	^ self code: 10000 type: 'application' message: aMessage
+	^ self application: aMessage code: 10000
 ]
 
 { #category : #'instance creation' }

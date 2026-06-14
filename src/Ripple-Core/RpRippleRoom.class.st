@@ -115,7 +115,12 @@ RpRippleRoom >> settings: anRpRoomSettings [
 	settings := anRpRoomSettings
 ]
 
+{ #category : #accessing }
+RpRippleRoom >> ripples [
+	^ self handler ripples
+]
+
 { #category : #routing }
 RpRippleRoom >> route [
-	^ '/ws/', name
+	^ '/ws/', self name
 ]
