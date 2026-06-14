@@ -28,6 +28,7 @@ Metacello new
 ```
 
 **Dependencies** (loaded automatically):
+- [Teapot](https://github.com/zeroflag/teapot) — Micro web framework
 - [NeoJSON](https://github.com/svenvc/NeoJSON) — JSON serialization
 - [Zinc WebSocket](https://github.com/svenvc/zinc) — WebSocket transport
 
