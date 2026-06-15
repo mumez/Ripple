@@ -132,16 +132,30 @@ MyEchoRipple class >> shouldAutoPutRoute [
 
 ### 5. Connect from the browser
 
-```javascript
-const bus = new Ripple('ws://localhost:8080/ws/echo?token=myToken');
-bus.connect();
+Install the official client from npm:
 
-const reply = await bus.send('/greet', { name: 'World' });
-console.log(reply);
+```bash
+npm install ripple-st-client
 ```
 
-A minimal vanilla-JS client (`Ripple.js`) is included in `test-assets/js/` for testing purposes.
-A full client library will be published as a separate repository.
+Then connect and communicate:
+
+```javascript
+import { Ripple } from 'ripple-st-client';
+
+const ripple = new Ripple('ws://localhost:8080/ws/echo?token=myToken');
+
+// Fire-and-forget send
+ripple.send('/greet', { name: 'World' });
+
+// Request with reply callback
+ripple.request('/greet', { name: 'World' }, (body, err) => {
+    if (err) { console.error(err); return; }
+    console.log(body);
+});
+```
+
+See [ripple-st-client](https://github.com/mumez/ripple-st-client) for the full client API. The [Integration Testing](#integration-testing) section below covers how to set up the client library for local testing.
 
 ## Architecture
 
