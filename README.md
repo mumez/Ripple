@@ -44,7 +44,7 @@ To start manually:
 RpServer default start.
 ```
 
-The server binds to `127.0.0.1:8080` by default.
+The server binds to `0.0.0.0:8080` by default.
 
 ### 2. Customize settings
 
@@ -70,7 +70,7 @@ Server settings are backed by environment variables and have sensible defaults:
 |---------|---------|---------|
 | `port` | `PHARO_RIPPLE_PORT` | `8080` |
 | `debugMode` | `PHARO_RIPPLE_DEBUG_MODE` | `false` |
-| `bindAddress` | `PHARO_RIPPLE_BIND_ADDRESS` | `127.0.0.1` |
+| `bindAddress` | `PHARO_RIPPLE_BIND_ADDRESS` | `0.0.0.0` |
 | `assetsDir` | `PHARO_RIPPLE_ASSETS_DIR` | `<cwd>/assets` |
 
 #### Room settings

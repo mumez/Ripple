@@ -27,7 +27,7 @@ RpServerSettings >> assetsDirectory [
 RpServerSettings >> bindAddress [
 	^ self at: #bindAddress ifAbsentPut: [
 		| env |
-		env := self envAt: 'PHARO_RIPPLE_BIND_ADDRESS' ifAbsent: [ '127.0.0.1' ].
+		env := self envAt: 'PHARO_RIPPLE_BIND_ADDRESS' ifAbsent: [ '0.0.0.0' ].
 		(env substrings: '.') collect: [ :each | each asInteger ] as: ByteArray ]
 ]
 
