@@ -24,13 +24,15 @@ Public API and Key Messages:
 Internal Representation:
 - originalResponse - RpWebSocketResponse holding the upgrade request/headers
 - baseHandler - the RpWebSocketEventBusHandler managing this connection
+- sendLock - Mutex serialising outgoing frame writes on this connection, preventing interleaved frames when multiple processes send concurrently (e.g. broadcast publish and direct send racing on the same socket)
 "
 Class {
 	#name : #RpWebSocket,
 	#superclass : #ZnWebSocket,
 	#instVars : [
 		'originalResponse',
-		'baseHandler'
+		'baseHandler',
+		'sendLock'
 	],
 	#category : #'Ripple-Core'
 }
@@ -112,7 +114,13 @@ RpWebSocket >> sendError: anRpError for: aMessage [
 
 { #category : #sending }
 RpWebSocket >> sendJson: anObject [
-	self sendText: (NeoJSONWriter toString: anObject)
+	self sendLock critical: [
+		self sendText: (NeoJSONWriter toString: anObject) ]
+]
+
+{ #category : #accessing }
+RpWebSocket >> sendLock [
+	^ sendLock ifNil: [ sendLock := Mutex new ]
 ]
 
 { #category : #'sending events' }
