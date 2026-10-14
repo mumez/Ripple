@@ -53,7 +53,7 @@ BaselineOfRipple >> zincHttp: spec [
 		baseline: 'ZincHTTPComponents'
 		with: [
 			spec
-				repository: 'github://svenvc/zinc:v5/repository';
+				repository: 'github://svenvc/zinc:83bb2cf95016cdc75cde3797b446f97b68b4780d/repository'; "The commit when Pharo 1.4 CI added & passed"
 				loads: #('WebSocket') ];
 		import: 'ZincHTTPComponents'
 ]
