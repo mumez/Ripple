@@ -6,7 +6,7 @@ Responsibility:
 - I create and hold the Teapot HTTP server, configured from RpServerSettings
 - I register WebSocket routes by accepting RpRippleRoom objects via #addRoom:
 - I serve static assets from the configured assets directory
-- I register with Pharo's SessionManager to restart cleanly on image startup
+- I register with Pharo's SessionManager to stop before image snapshots and restart cleanly on image startup
 
 Collaborators:
 - Teapot: the underlying HTTP server I configure and delegate to
@@ -75,8 +75,20 @@ RpServer class >> resetDefault [
 ]
 
 { #category : #'system startup' }
+RpServer class >> shutDown: isImageQuitting [
+	"Stop the default server before the snapshot so that no listening or
+	WebSocket worker process is saved into the image. Such stale processes
+	would wake up on the next image start and race with the new server
+	(e.g. 'Address already in use', errors reading from dead sockets)."
+	default ifNotNil: [ :server | server stop ]
+]
+
+{ #category : #'system startup' }
 RpServer class >> startUp: isImageStarting [
-	isImageStarting ifFalse: [ ^ self ].
+	isImageStarting ifFalse: [
+		"Image was only saved: resume the server stopped in #shutDown:"
+		default ifNotNil: [ :server | server start ].
+		^ self ].
 	default ifNotNil: [ default stop ].
 	default := nil.
 	Smalltalk session addDeferredStartupAction: [
